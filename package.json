@@ -1,0 +1,37 @@
+{
+  "name": "councilcode",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@auth/mongodb-adapter": "^3.11.1",
+    "@google/generative-ai": "^0.24.1",
+    "@mistralai/mistralai": "^2.1.1",
+    "ioredis": "^5.10.0",
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.3.1",
+    "next": "16.2.0",
+    "next-auth": "^5.0.0-beta.30",
+    "nodemailer": "^7.0.13",
+    "openai": "^6.32.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "stripe": "^20.4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20.19.37",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
