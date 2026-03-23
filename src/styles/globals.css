@@ -2,56 +2,135 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background:    #0A0A0A;
-  --surface:       #111111;
-  --surface-2:     #1C1C1C;
-  --border:        rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --accent:        #9580FF;
-  --accent-hover:  #A994FF;
-  --text-primary:  #FAFAFA;
-  --text-secondary:#A1A1AA;
-  --text-muted:    #52525B;
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Cinematic Dark Tech
+   ═══════════════════════════════════════════════════════════════ */
 
-  /* Model role colors — used only for terminal dot indicators */
+:root {
+  /* Backgrounds */
+  --bg-base:     #050508;
+  --bg-surface:  #0C0E14;
+  --bg-elevated: #12141C;
+
+  /* Borders */
+  --border-subtle:  rgba(255,255,255,0.05);
+  --border-default: rgba(255,255,255,0.09);
+  --border-strong:  rgba(255,255,255,0.16);
+
+  /* Accents */
+  --accent-blue:      #4361EE;
+  --accent-blue-glow: rgba(67,97,238,0.25);
+  --accent-cyan:      #06B6D4;
+  --accent-green:     #10B981;
+  --accent-amber:     #F59E0B;
+
+  /* Text */
+  --text-primary:   #EAEEF4;
+  --text-secondary: #8B95A8;
+  --text-muted:     #4A5568;
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3);
+  --shadow-glow-blue: 0 0 60px rgba(67,97,238,0.2), 0 0 120px rgba(67,97,238,0.08);
+
+  /* ── Backward-compat aliases (dashboard / council / auth) ── */
+  --background:   var(--bg-base);
+  --surface:      var(--bg-surface);
+  --surface-2:    var(--bg-elevated);
+  --border:       var(--border-default);
+  --accent:       var(--accent-blue);
+  --accent-hover: #3251d4;
+  --font-sans:    var(--font-body);
+
+  /* Model role colors — preserved for dashboard/council */
   --claude:     #9580FF;
   --gpt4o:      #34D399;
   --codestral:  #FBBF24;
   --gemini:     #60A5FA;
   --perplexity: #C084FC;
-
-  --font-sans:    'Bricolage Grotesque', system-ui, sans-serif;
-  --font-mono:    'DM Mono', 'JetBrains Mono', monospace;
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL BASE STYLES
+   ═══════════════════════════════════════════════════════════════ */
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: rgba(149, 128, 255, 0.25);
-  color: #FAFAFA;
+  background: rgba(67,97,238,0.3);
 }
 
 body {
-  background: var(--background);
+  background: var(--bg-base);
   color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-body);
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Scroll-fade utility ───────────────────────────────────────── */
+/* Animated grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* Dot grid (Onyx / Linear style) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Legacy class — kept for dashboard/council compatibility */
 .section-fade {
   opacity: 0;
   transform: translateY(24px);
@@ -62,7 +141,10 @@ body {
   transform: translateY(0);
 }
 
-/* ── Keyframes ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════════════════════════ */
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -85,12 +167,12 @@ body {
 
 @keyframes glow-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.35; transform: scale(0.8); }
+  50%      { opacity: 0.35; transform: scale(0.8); }
 }
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  50%      { opacity: 0.3; }
 }
 
 @keyframes slide-in-right {
@@ -100,7 +182,7 @@ body {
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+  50%      { opacity: 0; }
 }
 
 @keyframes spin {
@@ -113,7 +195,10 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Animation utilities ──────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
 .animate-fade-up {
   animation: fadeUp 0.6s ease forwards;
   opacity: 0;
@@ -130,7 +215,7 @@ body {
   opacity: 0;
 }
 
-/* ── Delay utilities ──────────────────────────────────────────── */
+/* ── Delay utilities ── */
 .delay-0   { animation-delay: 0ms; }
 .delay-80  { animation-delay: 80ms; }
 .delay-100 { animation-delay: 100ms; }

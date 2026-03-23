@@ -48,7 +48,6 @@ export default function Hero() {
     return () => clearInterval(blink)
   }, [])
 
-  // Global scroll-fade observer — drives .section-fade elements across the page
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -61,116 +60,173 @@ export default function Hero() {
       },
       { threshold: 0.1 }
     )
-    const targets = document.querySelectorAll('.section-fade')
-    targets.forEach((el) => observer.observe(el))
+    document.querySelectorAll('.fade-up, .section-fade').forEach((el) => observer.observe(el))
     return () => observer.disconnect()
   }, [])
 
   return (
     <section
-      className="relative min-h-screen flex flex-col justify-center items-center px-6 pt-28 pb-20 overflow-hidden text-center"
+      style={{
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: '160px',
+        paddingBottom: '100px',
+        paddingLeft: '24px',
+        paddingRight: '24px',
+        overflow: 'hidden',
+        textAlign: 'center',
+        background: `
+          radial-gradient(ellipse 900px 600px at 50% -100px, rgba(67,97,238,0.18), transparent 70%),
+          radial-gradient(ellipse 400px 300px at 80% 20%, rgba(6,182,212,0.06), transparent 60%)
+        `,
+      }}
     >
-      {/* Subtle grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
-          backgroundSize: '72px 72px',
-        }}
-      />
-      {/* Very faint radial warmth — neutral, no color */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none"
-        style={{
-          width: '900px',
-          height: '480px',
-          background: 'radial-gradient(ellipse 900px 480px at 50% 0%, rgba(255,255,255,0.04), transparent)',
-        }}
-      />
-
-      {/* Copy */}
-      <div className="relative w-full" style={{ maxWidth: '700px', margin: '0 auto' }}>
-
-        {/* Eyebrow */}
-        <div className="animate-fade-up delay-100 flex justify-center mb-8">
+      <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+        {/* Eyebrow badge */}
+        <div className="animate-fade-up delay-100" style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
           <span
-            className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full"
             style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid var(--border-default)',
+              borderRadius: '100px',
+              padding: '6px 16px',
+              fontSize: '12px',
+              fontFamily: 'var(--font-mono)',
               color: 'var(--text-secondary)',
-              letterSpacing: '0.06em',
+              letterSpacing: '0.04em',
             }}
           >
-            <span
-              className="w-1.5 h-1.5 rounded-full"
-              style={{
-                background: '#34D399',
-                animation: 'glow-pulse 2s ease-in-out infinite',
-              }}
-            />
-            Five models. One codebase.
+            Lab
+            <span style={{ color: 'var(--accent-blue)' }}>·</span>
+            Field Data
+            <span style={{ color: 'var(--accent-blue)' }}>·</span>
+            AI Council
+            <span style={{ color: 'var(--accent-blue)' }}>·</span>
+            Zero Hallucinations
           </span>
         </div>
 
         {/* Headline */}
         <h1
-          className="font-bold leading-[1.06] mb-6"
           style={{
-            color: 'var(--text-primary)',
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(44px, 6vw, 72px)',
+            fontSize: 'clamp(52px, 7vw, 88px)',
+            fontWeight: 800,
+            lineHeight: 1.0,
             letterSpacing: '-0.04em',
+            color: 'var(--text-primary)',
+            maxWidth: '800px',
+            margin: '0 auto 20px',
+            textAlign: 'center',
           }}
         >
           <span className="animate-word delay-100" style={{ marginRight: '0.22em' }}>Your</span>
           <span className="animate-word delay-160" style={{ marginRight: '0.22em' }}>AI</span>
-          <span className="animate-word delay-240" style={{ color: 'var(--accent)', marginRight: '0.22em' }}>Engineering</span>
+          <span
+            className="animate-word delay-240"
+            style={{
+              marginRight: '0.22em',
+              background: 'linear-gradient(135deg, #4361EE 0%, #06B6D4 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Engineering
+          </span>
           <span className="animate-word delay-320">Firm.</span>
         </h1>
 
-        {/* Sub-copy */}
+        {/* Subheading */}
         <p
-          className="animate-fade-up delay-300 text-lg mx-auto mb-10"
+          className="animate-fade-up delay-300"
           style={{
+            fontSize: '18px',
             color: 'var(--text-secondary)',
+            fontWeight: 300,
+            maxWidth: '520px',
+            margin: '0 auto 48px',
+            textAlign: 'center',
             lineHeight: 1.7,
-            maxWidth: '540px',
           }}
         >
-          CouncilCode deploys five specialized AI models that collaborate as a structured team —
-          each with a defined role, reviewing each other&apos;s work, resolving conflicts,
-          and shipping code you can actually trust.
+          CouncilCode deploys <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>five specialized AI models</strong> that
+          collaborate as a structured team — reviewing each other&apos;s work, resolving conflicts,
+          and shipping code you can <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>actually trust</strong>.
         </p>
 
         {/* CTAs */}
-        <div className="animate-fade-up delay-400 flex items-center justify-center flex-wrap gap-4 mb-10">
+        <div className="animate-fade-up delay-400" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
             style={{
-              background: '#FAFAFA',
-              color: '#0A0A0A',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--accent-blue)',
+              color: 'white',
+              borderRadius: 'var(--radius-md)',
+              padding: '14px 28px',
+              fontSize: '15px',
+              fontWeight: 500,
+              textDecoration: 'none',
+              boxShadow: '0 0 0 1px rgba(67,97,238,0.4), var(--shadow-glow-blue)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.transform = 'translateY(-1px)'
+              el.style.boxShadow = '0 0 0 1px rgba(67,97,238,0.6), 0 0 80px rgba(67,97,238,0.3)'
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.transform = 'translateY(0)'
+              el.style.boxShadow = '0 0 0 1px rgba(67,97,238,0.4), var(--shadow-glow-blue)'
             }}
           >
             Start building free
-            <span aria-hidden>→</span>
+            <span aria-hidden="true">→</span>
           </Link>
-          <Link
+          <a
             href="#how-it-works"
-            className="inline-flex items-center gap-2 text-sm transition-colors duration-150"
-            style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-muted)' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'transparent',
+              border: '1px solid var(--border-default)',
+              borderRadius: 'var(--radius-md)',
+              padding: '14px 28px',
+              color: 'var(--text-secondary)',
+              fontSize: '15px',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.borderColor = 'var(--border-strong)'
+              el.style.color = 'var(--text-primary)'
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.borderColor = 'var(--border-default)'
+              el.style.color = 'var(--text-secondary)'
+            }}
           >
             See how it works
-            <span aria-hidden>↓</span>
-          </Link>
+            <span aria-hidden="true">↓</span>
+          </a>
         </div>
 
         {/* Trust signals */}
-        <div className="animate-fade-up delay-500 flex items-center justify-center flex-wrap gap-6">
+        <div className="animate-fade-up delay-500" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '24px', marginBottom: '0' }}>
           {[
             'Zero hallucinations',
             'Context never drifts',
@@ -178,48 +234,77 @@ export default function Hero() {
           ].map((signal) => (
             <span
               key={signal}
-              className="flex items-center gap-1.5 text-xs"
-              style={{ color: 'var(--text-muted)' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '12px',
+                color: 'var(--text-muted)',
+                fontFamily: 'var(--font-mono)',
+              }}
             >
-              <span style={{ color: '#34D399' }}>✓</span>
+              <span style={{ color: 'var(--accent-green)' }}>✓</span>
               {signal}
             </span>
           ))}
         </div>
       </div>
 
-      {/* Terminal panel — below copy, full-width centered */}
+      {/* Terminal panel */}
       <div
-        className="animate-fade-in delay-500 relative w-full mt-16 overflow-hidden"
+        className="animate-fade-in delay-500"
         style={{
+          position: 'relative',
+          width: '100%',
           maxWidth: '760px',
-          margin: '64px auto 0',
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderRadius: '16px',
+          marginTop: '64px',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-default)',
+          borderRadius: 'var(--radius-xl)',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-card), var(--shadow-glow-blue)',
         }}
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-5 py-3"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 20px',
+            borderBottom: '1px solid var(--border-subtle)',
+          }}
         >
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+          </div>
           <span
-            className="text-xs"
-            style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
+            style={{
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              fontFamily: 'var(--font-mono)',
+            }}
           >
             council-session-0001
           </span>
           <span
-            className="text-xs flex items-center gap-1.5"
-            style={{ color: '#34D399', fontFamily: 'var(--font-mono)' }}
+            style={{
+              fontSize: '11px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: 'var(--accent-green)',
+              fontFamily: 'var(--font-mono)',
+            }}
           >
             <span
-              className="w-1.5 h-1.5 rounded-full"
               style={{
-                background: '#34D399',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: 'var(--accent-green)',
                 animation: 'glow-pulse 1.5s ease-in-out infinite',
               }}
             />
@@ -229,9 +314,10 @@ export default function Hero() {
 
         {/* Prompt */}
         <div
-          className="px-5 py-3 text-xs"
           style={{
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            padding: '12px 20px',
+            borderBottom: '1px solid var(--border-subtle)',
+            fontSize: '12px',
             color: 'var(--text-secondary)',
             fontFamily: 'var(--font-mono)',
             textAlign: 'left',
@@ -240,9 +326,14 @@ export default function Hero() {
           <span style={{ color: 'var(--text-muted)' }}>› </span>
           Build a full-stack SaaS with auth, billing, and user dashboard
           <span
-            className="inline-block w-[7px] h-3.5 ml-0.5 align-middle rounded-sm"
             style={{
-              background: 'var(--text-secondary)',
+              display: 'inline-block',
+              width: '7px',
+              height: '14px',
+              marginLeft: '2px',
+              verticalAlign: 'middle',
+              borderRadius: '2px',
+              background: 'var(--accent-blue)',
               opacity: cursor ? 0.7 : 0,
               transition: 'opacity 0.1s',
             }}
@@ -250,60 +341,85 @@ export default function Hero() {
         </div>
 
         {/* Messages */}
-        <div className="p-5 space-y-4 min-h-[300px]" style={{ textAlign: 'left' }}>
-          {COUNCIL_MESSAGES.slice(0, visibleMessages).map((msg, i) => (
-            <div
-              key={i}
-              className="flex gap-3 items-start"
-              style={{
-                animation: 'typewriter-line 0.3s ease forwards',
-                animationDelay: `${i * 150}ms`,
-                opacity: 0,
-              }}
-            >
-              <span
-                className="flex-shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full"
-                style={{ background: MODEL_COLORS[msg.model] }}
-              />
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span
-                    className="text-xs font-medium"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {msg.model}
-                  </span>
-                  <span
-                    className="text-xs"
-                    style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
-                  >
-                    {MODEL_ROLES[msg.model]}
-                  </span>
-                </div>
-                <p
-                  className="text-xs leading-relaxed"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  {msg.text}
-                </p>
-              </div>
-            </div>
-          ))}
-          {visibleMessages < COUNCIL_MESSAGES.length && (
-            <div className="flex gap-1.5 pl-[18px] pt-1">
-              {[0, 1, 2].map((i) => (
+        <div style={{ padding: '20px', minHeight: '300px', textAlign: 'left' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {COUNCIL_MESSAGES.slice(0, visibleMessages).map((msg, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  alignItems: 'flex-start',
+                  animation: 'typewriter-line 0.3s ease forwards',
+                  animationDelay: `${i * 150}ms`,
+                  opacity: 0,
+                }}
+              >
                 <span
-                  key={i}
-                  className="w-1 h-1 rounded-full"
                   style={{
-                    background: 'var(--text-muted)',
-                    animation: 'glow-pulse 1.2s ease-in-out infinite',
-                    animationDelay: `${i * 200}ms`,
+                    flexShrink: 0,
+                    marginTop: '5px',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: MODEL_COLORS[msg.model],
+                    boxShadow: `0 0 8px ${MODEL_COLORS[msg.model]}40`,
                   }}
                 />
-              ))}
-            </div>
-          )}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                    <span
+                      style={{
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        color: 'var(--text-primary)',
+                      }}
+                    >
+                      {msg.model}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        color: 'var(--text-muted)',
+                        fontFamily: 'var(--font-mono)',
+                        background: 'rgba(255,255,255,0.04)',
+                        padding: '1px 6px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {MODEL_ROLES[msg.model]}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      lineHeight: 1.6,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    {msg.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {visibleMessages < COUNCIL_MESSAGES.length && (
+              <div style={{ display: 'flex', gap: '6px', paddingLeft: '18px', paddingTop: '4px' }}>
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: '4px',
+                      height: '4px',
+                      borderRadius: '50%',
+                      background: 'var(--text-muted)',
+                      animation: 'glow-pulse 1.2s ease-in-out infinite',
+                      animationDelay: `${i * 200}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

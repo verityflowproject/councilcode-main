@@ -51,73 +51,83 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="section-fade px-6"
+      className="fade-up"
       style={{
-        background: 'var(--background)',
-        paddingTop: '120px',
-        paddingBottom: '120px',
+        padding: '120px 40px',
       }}
     >
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
         {/* Header */}
-        <div className="mb-16" style={{ maxWidth: '560px' }}>
-          <span
-            className="text-xs uppercase block"
-            style={{
-              color: 'var(--text-muted)',
-              marginBottom: '12px',
-              letterSpacing: '0.1em',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            FAQ
-          </span>
-          <h2
-            className="font-bold leading-tight"
-            style={{
-              color: 'var(--text-primary)',
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(32px, 4vw, 48px)',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Questions, answered.
-          </h2>
-        </div>
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '36px',
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            color: 'var(--text-primary)',
+            marginBottom: '48px',
+          }}
+        >
+          Questions, answered.
+        </h2>
 
         {/* Accordion */}
-        <div style={{ maxWidth: '700px' }}>
+        <div>
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx
             return (
               <div
                 key={idx}
-                style={{ borderBottom: '1px solid var(--border)' }}
+                className="fade-up"
+                style={{ borderBottom: '1px solid var(--border-subtle)' }}
               >
                 <button
-                  className="w-full flex items-start justify-between gap-6 py-6 text-left transition-colors duration-150"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
                   aria-expanded={isOpen}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: '24px',
+                    padding: '20px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    const span = e.currentTarget.querySelector('span:first-child') as HTMLSpanElement
+                    if (span) span.style.color = 'var(--accent-blue)'
+                  }}
+                  onMouseLeave={(e) => {
+                    const span = e.currentTarget.querySelector('span:first-child') as HTMLSpanElement
+                    if (span) span.style.color = isOpen ? 'var(--text-primary)' : 'var(--text-secondary)'
+                  }}
                 >
                   <span
-                    className="text-base font-medium"
                     style={{
+                      fontSize: '15px',
+                      fontWeight: 500,
                       color: isOpen ? 'var(--text-primary)' : 'var(--text-secondary)',
-                      fontFamily: 'var(--font-display)',
-                      letterSpacing: '-0.01em',
+                      fontFamily: 'var(--font-body)',
                       transition: 'color 0.15s ease',
                     }}
                   >
                     {faq.question}
                   </span>
                   <span
-                    className="flex-shrink-0 text-lg leading-none mt-0.5 transition-transform duration-200"
                     style={{
+                      flexShrink: 0,
+                      fontSize: '20px',
+                      fontWeight: 300,
+                      lineHeight: 1,
                       color: 'var(--text-muted)',
+                      transition: 'transform 0.2s ease',
                       transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+                      marginTop: '2px',
                     }}
-                    aria-hidden
+                    aria-hidden="true"
                   >
                     +
                   </span>
@@ -125,14 +135,17 @@ export default function FAQ() {
 
                 {isOpen && (
                   <div
-                    className="pb-6"
                     style={{
+                      paddingBottom: '20px',
                       animation: 'accordion-open 0.22s ease forwards',
                     }}
                   >
                     <p
-                      className="text-sm leading-relaxed"
-                      style={{ color: 'var(--text-muted)', lineHeight: 1.75 }}
+                      style={{
+                        fontSize: '14px',
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.7,
+                      }}
                     >
                       {faq.answer}
                     </p>
