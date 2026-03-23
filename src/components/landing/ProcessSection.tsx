@@ -5,8 +5,6 @@ const STEPS = [
     description:
       'Write your project in plain language. No spec docs, no boilerplate. Just describe what you want to build.',
     detail: 'Natural language → structured task queue',
-    color: 'var(--text-muted)',
-    colorHex: '#64748B',
   },
   {
     number: '02',
@@ -14,8 +12,6 @@ const STEPS = [
     description:
       'Before a single line is written, our Researcher model checks every library, package version, and API against live documentation.',
     detail: 'Zero hallucinated imports. Every package confirmed.',
-    color: 'var(--perplexity)',
-    colorHex: '#8B5CF6',
   },
   {
     number: '03',
@@ -23,8 +19,6 @@ const STEPS = [
     description:
       'The Architect model produces the system design, data models, and API structure. All decisions are written to the shared ProjectState.',
     detail: 'Decisions persist across the entire session.',
-    color: 'var(--claude)',
-    colorHex: '#4F6EF7',
   },
   {
     number: '04',
@@ -32,8 +26,6 @@ const STEPS = [
     description:
       'The Implementer model generates production-ready code using the verified dependencies and architecture decisions as its ground truth.',
     detail: 'Code generated against confirmed facts only.',
-    color: 'var(--codestral)',
-    colorHex: '#F59E0B',
   },
   {
     number: '05',
@@ -41,8 +33,6 @@ const STEPS = [
     description:
       'The Generalist model cross-checks every output for correctness, security issues, and consistency with the established conventions.',
     detail: 'Approved, patched, or escalated — never silently wrong.',
-    color: 'var(--gpt4o)',
-    colorHex: '#10B981',
   },
   {
     number: '06',
@@ -50,8 +40,6 @@ const STEPS = [
     description:
       'With its massive context window, the Refactor model reads your entire project at once and enforces consistency across every file.',
     detail: 'Context that never drifts — even on large codebases.',
-    color: 'var(--gemini)',
-    colorHex: '#3B82F6',
   },
   {
     number: '07',
@@ -59,8 +47,6 @@ const STEPS = [
     description:
       'When models disagree, Claude acts as the final arbiter — picking the correct approach and writing a rationale you can read in the session log.',
     detail: 'Every decision is transparent and auditable.',
-    color: 'var(--claude)',
-    colorHex: '#4F6EF7',
   },
 ]
 
@@ -69,39 +55,43 @@ export default function ProcessSection() {
     <section
       id="how-it-works"
       className="section-fade px-6"
-      style={{ paddingTop: '120px', paddingBottom: '120px' }}
+      style={{
+        background: 'var(--surface)',
+        paddingTop: '120px',
+        paddingBottom: '120px',
+      }}
     >
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         {/* Section header */}
-        <div className="max-w-2xl mb-20">
+        <div className="mb-20" style={{ maxWidth: '600px' }}>
           <span
             className="text-xs uppercase block"
             style={{
-              color: 'var(--accent)',
-              marginBottom: '8px',
-              letterSpacing: '0.08em',
+              color: 'var(--text-muted)',
+              marginBottom: '12px',
+              letterSpacing: '0.1em',
               fontFamily: 'var(--font-mono)',
             }}
           >
             How it works
           </span>
           <h2
-            className="text-4xl lg:text-5xl font-bold leading-tight mb-6"
+            className="font-bold leading-tight mb-5"
             style={{
               color: 'var(--text-primary)',
               fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(32px, 4vw, 48px)',
               letterSpacing: '-0.03em',
             }}
           >
-            Not a coding assistant.
-            <br />
-            <span style={{ color: 'var(--text-secondary)' }}>
+            Not a coding assistant.{' '}
+            <span style={{ color: 'var(--text-muted)' }}>
               A structured engineering process.
             </span>
           </h2>
           <p
-            className="text-lg"
-            style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}
+            className="text-base"
+            style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}
           >
             Every project runs through the same rigorous pipeline.
             Models don&apos;t take turns — they collaborate, verify, review,
@@ -109,67 +99,69 @@ export default function ProcessSection() {
           </p>
         </div>
 
-        {/* Steps */}
-        <div className="space-y-0">
-          {STEPS.map((step) => (
+        {/* Steps — vertical timeline */}
+        <div style={{ maxWidth: '800px' }}>
+          {STEPS.map((step, idx) => (
             <div
               key={step.number}
-              className="relative pb-12 last:pb-0"
-              style={{
-                borderLeft: `2px solid ${step.colorHex}`,
-                paddingLeft: '32px',
-                marginLeft: '8px',
-              }}
+              className="flex gap-8"
+              style={{ paddingBottom: idx < STEPS.length - 1 ? '40px' : '0' }}
             >
-              {/* Content */}
-              <div className="pt-2 space-y-3 max-w-xl">
-                {/* Title row with decorative ghost number */}
-                <div className="relative">
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      top: '-16px',
-                      left: '-8px',
-                      fontSize: '64px',
-                      fontWeight: 800,
-                      opacity: 0.08,
-                      color: 'var(--text-primary)',
-                      fontFamily: 'var(--font-display)',
-                      lineHeight: 1,
-                      userSelect: 'none',
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    {step.number}
-                  </span>
-                  <h3
-                    className="text-lg font-semibold relative"
-                    style={{
-                      color: 'var(--text-primary)',
-                      fontFamily: 'var(--font-display)',
-                    }}
-                  >
-                    {step.title}
-                  </h3>
+              {/* Left — number + connecting line */}
+              <div className="flex flex-col items-center flex-shrink-0">
+                <div
+                  className="flex items-center justify-center text-xs font-semibold rounded-full flex-shrink-0"
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-muted)',
+                    fontFamily: 'var(--font-mono)',
+                    flexShrink: 0,
+                  }}
+                >
+                  {step.number}
                 </div>
+                {idx < STEPS.length - 1 && (
+                  <div
+                    className="flex-1 w-px mt-3"
+                    style={{
+                      background: 'var(--border)',
+                      minHeight: '32px',
+                    }}
+                  />
+                )}
+              </div>
 
+              {/* Right — content */}
+              <div className="pb-2" style={{ paddingTop: '6px' }}>
+                <h3
+                  className="font-semibold mb-2"
+                  style={{
+                    color: 'var(--text-primary)',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '17px',
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  {step.title}
+                </h3>
                 <p
-                  className="text-sm"
-                  style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}
+                  className="text-sm mb-3"
+                  style={{ color: 'var(--text-secondary)', lineHeight: 1.65 }}
                 >
                   {step.description}
                 </p>
-
-                {/* Code chip */}
+                {/* Neutral chip */}
                 <span
                   style={{
                     display: 'inline-block',
-                    background: 'rgba(16,185,129,0.08)',
-                    color: '#10B981',
-                    border: '1px solid rgba(16,185,129,0.2)',
+                    background: 'rgba(255,255,255,0.05)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border)',
                     borderRadius: '6px',
-                    padding: '2px 8px',
+                    padding: '2px 10px',
                     fontSize: '12px',
                     fontFamily: 'var(--font-mono)',
                   }}

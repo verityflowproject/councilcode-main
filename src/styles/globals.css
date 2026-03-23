@@ -3,24 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background: #080A0F;
-  --surface: #0D1117;
-  --border: rgba(255, 255, 255, 0.06);
-  --accent: #4F6EF7;
-  --accent-hover: #6B84F8;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --background:    #0A0A0A;
+  --surface:       #111111;
+  --surface-2:     #1C1C1C;
+  --border:        rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --accent:        #9580FF;
+  --accent-hover:  #A994FF;
+  --text-primary:  #FAFAFA;
+  --text-secondary:#A1A1AA;
+  --text-muted:    #52525B;
 
-  /* Model role colors */
-  --claude: #4F6EF7;
-  --gpt4o: #10B981;
-  --codestral: #F59E0B;
-  --gemini: #3B82F6;
-  --perplexity: #8B5CF6;
+  /* Model role colors — used only for terminal dot indicators */
+  --claude:     #9580FF;
+  --gpt4o:      #34D399;
+  --codestral:  #FBBF24;
+  --gemini:     #60A5FA;
+  --perplexity: #C084FC;
 
-  --font-sans: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-mono: 'DM Mono', 'JetBrains Mono', monospace;
+  --font-sans:    'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono:    'DM Mono', 'JetBrains Mono', monospace;
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
 }
 
@@ -35,8 +37,8 @@ html {
 }
 
 ::selection {
-  background: rgba(79, 110, 247, 0.3);
-  color: #F1F5F9;
+  background: rgba(149, 128, 255, 0.25);
+  color: #FAFAFA;
 }
 
 body {
@@ -49,19 +51,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Scroll-fade utility ─────────────────────────────────────── */
+/* ── Scroll-fade utility ───────────────────────────────────────── */
 .section-fade {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.55s ease, transform 0.55s ease;
 }
-
 .section-fade.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ── Keyframes ────────────────────────────────────────────────── */
+/* ── Keyframes ─────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -73,27 +74,27 @@ body {
 }
 
 @keyframes word-fade-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes typewriter-line {
-  from { opacity: 0; transform: translateX(8px); }
+  from { opacity: 0; transform: translateX(6px); }
   to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  50%       { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
 }
 
 @keyframes glow-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.85); }
+  50%       { opacity: 0.35; transform: scale(0.8); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(16px); }
+  from { opacity: 0; transform: translateX(12px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -107,7 +108,12 @@ body {
   to   { transform: rotate(360deg); }
 }
 
-/* ── Animation utility classes ────────────────────────────────── */
+@keyframes accordion-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Animation utilities ──────────────────────────────────────── */
 .animate-fade-up {
   animation: fadeUp 0.6s ease forwards;
   opacity: 0;
