@@ -4,11 +4,11 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const MODEL_COLORS: Record<string, string> = {
-  Claude:      '#f97316',
-  GPT:         '#10b981',
-  Codestral:   '#f59e0b',
-  Gemini:      '#3b82f6',
-  Perplexity:  '#8b5cf6',
+  Claude:      '#4F6EF7',
+  GPT:         '#10B981',
+  Codestral:   '#F59E0B',
+  Gemini:      '#3B82F6',
+  Perplexity:  '#8B5CF6',
 }
 
 const MODEL_ROLES: Record<string, string> = {
@@ -31,6 +31,7 @@ const COUNCIL_MESSAGES = [
 export default function Hero() {
   const [visibleMessages, setVisibleMessages] = useState<number>(0)
   const [cursor, setCursor] = useState(true)
+  const [ctaGlow, setCtaGlow] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,44 +49,66 @@ export default function Hero() {
     return () => clearInterval(blink)
   }, [])
 
+  // Global scroll-fade observer — drives .section-fade elements across the page
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12 }
+    )
+    const targets = document.querySelectorAll('.section-fade')
+    targets.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <section className="relative min-h-screen flex flex-col justify-center px-6 pt-24 pb-16 overflow-hidden">
       {/* Background grid */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `linear-gradient(var(--text-primary) 1px, transparent 1px),
-                            linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
           backgroundSize: '64px 64px',
         }}
       />
       {/* Radial glow */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] opacity-10 pointer-events-none"
+        className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, var(--accent) 0%, transparent 70%)',
+          width: '800px',
+          height: '400px',
+          background: 'radial-gradient(ellipse 800px 400px at 50% 0%, rgba(79,110,247,0.15), transparent)',
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto w-full">
+      <div className="relative max-w-[1100px] mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           {/* Left — copy */}
           <div className="space-y-8">
             <div className="animate-fade-up delay-100">
               <span
-                className="inline-flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full border"
+                className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border"
                 style={{
-                  borderColor: 'var(--border)',
+                  borderColor: 'rgba(79,110,247,0.3)',
                   color: 'var(--accent)',
-                  background: 'rgba(99,102,241,0.08)',
+                  background: 'rgba(79,110,247,0.08)',
+                  fontFamily: 'var(--font-mono)',
+                  letterSpacing: '0.08em',
                 }}
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full"
                   style={{
                     background: 'var(--accent)',
-                    animation: 'pulse-dot 2s ease-in-out infinite',
+                    animation: 'glow-pulse 2s ease-in-out infinite',
                   }}
                 />
                 Five models. One codebase.
@@ -93,19 +116,30 @@ export default function Hero() {
             </div>
 
             <h1
-              className="animate-fade-up delay-200 text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight"
-              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
+              className="font-bold leading-[1.05]"
+              style={{
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(56px, 7vw, 80px)',
+                letterSpacing: '-0.03em',
+              }}
             >
-              Your AI
+              <span className="animate-word delay-100" style={{ marginRight: '0.25em' }}>Your</span>
+              <span className="animate-word delay-160" style={{ marginRight: '0.25em' }}>AI</span>
               <br />
-              <span style={{ color: 'var(--accent)' }}>Engineering</span>
+              <span
+                className="animate-word delay-240"
+                style={{ color: 'var(--accent)', marginRight: '0.25em' }}
+              >
+                Engineering
+              </span>
               <br />
-              Firm.
+              <span className="animate-word delay-320">Firm.</span>
             </h1>
 
             <p
-              className="animate-fade-up delay-300 text-lg leading-relaxed max-w-md"
-              style={{ color: 'var(--text-secondary)' }}
+              className="animate-fade-up delay-300 text-lg max-w-md"
+              style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}
             >
               CouncilCode deploys five specialized AI models that collaborate as a structured team —
               each with a defined role, reviewing each other&apos;s work, resolving conflicts,
@@ -115,22 +149,28 @@ export default function Hero() {
             <div className="animate-fade-up delay-400 flex flex-wrap gap-4">
               <Link
                 href="/register"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-95"
                 style={{
                   background: 'var(--accent)',
                   color: '#fff',
+                  boxShadow: ctaGlow ? '0 0 20px rgba(79,110,247,0.4), 0 0 40px rgba(79,110,247,0.2)' : 'none',
+                  transition: 'box-shadow 0.2s ease, opacity 0.15s ease',
                 }}
+                onMouseEnter={() => setCtaGlow(true)}
+                onMouseLeave={() => setCtaGlow(false)}
               >
                 Start building free
                 <span>→</span>
               </Link>
               <Link
                 href="#how-it-works"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium border transition-all duration-150 hover:border-accent"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium border transition-all duration-150"
                 style={{
-                  borderColor: 'var(--border)',
+                  borderColor: 'rgba(255,255,255,0.1)',
                   color: 'var(--text-secondary)',
                 }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.2)' }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.1)' }}
               >
                 See how it works
               </Link>
@@ -148,7 +188,7 @@ export default function Hero() {
                   className="flex items-center gap-2 text-xs"
                   style={{ color: 'var(--text-muted)' }}
                 >
-                  <span style={{ color: '#10b981' }}>✓</span>
+                  <span style={{ color: '#10B981' }}>✓</span>
                   {signal}
                 </span>
               ))}
@@ -157,51 +197,55 @@ export default function Hero() {
 
           {/* Right — live council session panel */}
           <div
-            className="animate-fade-in delay-300 rounded-xl border overflow-hidden"
+            className="animate-fade-in delay-300 overflow-hidden"
             style={{
-              borderColor: 'var(--border)',
-              background: 'var(--surface)',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              borderRadius: '16px',
             }}
           >
-            {/* Panel header */}
+            {/* Panel header — macOS chrome */}
             <div
               className="flex items-center justify-between px-4 py-3 border-b"
-              style={{ borderColor: 'var(--border)' }}
+              style={{ borderColor: 'rgba(255,255,255,0.06)' }}
             >
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
-                  {['#ff5f57', '#febc2e', '#28c840'].map((c) => (
+                  {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => (
                     <span key={c} className="w-3 h-3 rounded-full" style={{ background: c }} />
                   ))}
                 </div>
                 <span
-                  className="text-xs font-mono ml-2"
-                  style={{ color: 'var(--text-muted)' }}
+                  className="text-xs ml-2"
+                  style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
                 >
                   council-session-0001
                 </span>
               </div>
               <span
-                className="text-xs font-mono flex items-center gap-1.5"
-                style={{ color: '#10b981' }}
+                className="text-xs flex items-center gap-1.5"
+                style={{ color: '#10B981', fontFamily: 'var(--font-mono)' }}
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full"
                   style={{
-                    background: '#10b981',
-                    animation: 'pulse-dot 1.5s ease-in-out infinite',
+                    background: '#10B981',
+                    animation: 'glow-pulse 1.5s ease-in-out infinite',
                   }}
                 />
                 live
               </span>
             </div>
 
-            {/* Prompt */}
+            {/* Prompt line */}
             <div
-              className="px-4 py-3 border-b font-mono text-xs"
+              className="px-4 py-3 border-b text-xs"
               style={{
-                borderColor: 'var(--border)',
+                borderColor: 'rgba(255,255,255,0.06)',
                 color: 'var(--text-secondary)',
+                fontFamily: 'var(--font-mono)',
               }}
             >
               <span style={{ color: 'var(--text-muted)' }}>prompt › </span>
@@ -223,7 +267,9 @@ export default function Hero() {
                   key={i}
                   className="flex gap-3 items-start"
                   style={{
-                    animation: 'slide-in-right 0.3s ease forwards',
+                    animation: 'typewriter-line 0.3s ease forwards',
+                    animationDelay: `${i * 200}ms`,
+                    opacity: 0,
                   }}
                 >
                   <div
@@ -242,8 +288,8 @@ export default function Hero() {
                         {msg.model}
                       </span>
                       <span
-                        className="text-xs font-mono"
-                        style={{ color: 'var(--text-muted)' }}
+                        className="text-xs"
+                        style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
                       >
                         {MODEL_ROLES[msg.model]}
                       </span>
@@ -265,7 +311,7 @@ export default function Hero() {
                       className="w-1 h-1 rounded-full"
                       style={{
                         background: 'var(--text-muted)',
-                        animation: `pulse-dot 1.2s ease-in-out infinite`,
+                        animation: `glow-pulse 1.2s ease-in-out infinite`,
                         animationDelay: `${i * 200}ms`,
                       }}
                     />
@@ -274,12 +320,12 @@ export default function Hero() {
               )}
             </div>
 
-            {/* Footer */}
+            {/* Panel footer — model legend */}
             <div
-              className="px-4 py-3 border-t flex items-center justify-between"
-              style={{ borderColor: 'var(--border)' }}
+              className="px-4 py-3 border-t flex items-center"
+              style={{ borderColor: 'rgba(255,255,255,0.06)' }}
             >
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {Object.entries(MODEL_COLORS).map(([name, color]) => (
                   <div key={name} className="flex items-center gap-1.5">
                     <span
@@ -287,8 +333,8 @@ export default function Hero() {
                       style={{ background: color }}
                     />
                     <span
-                      className="text-xs font-mono"
-                      style={{ color: 'var(--text-muted)' }}
+                      className="text-xs"
+                      style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
                     >
                       {name}
                     </span>

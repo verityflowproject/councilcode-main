@@ -6,7 +6,7 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between border-b"
       style={{
         borderColor: 'var(--border)',
-        background: 'rgba(10, 10, 15, 0.85)',
+        background: 'rgba(8, 10, 15, 0.88)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}

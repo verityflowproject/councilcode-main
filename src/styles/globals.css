@@ -3,25 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0f;
-  --surface: #111118;
-  --border: #1e1e2e;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --text-primary: #f1f0ff;
-  --text-secondary: #a09ec0;
-  --text-muted: #4a4870;
+  --background: #080A0F;
+  --surface: #0D1117;
+  --border: rgba(255, 255, 255, 0.06);
+  --accent: #4F6EF7;
+  --accent-hover: #6B84F8;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
 
   /* Model role colors */
-  --claude: #f97316;
-  --gpt4o: #10b981;
-  --codestral: #f59e0b;
-  --gemini: #3b82f6;
-  --perplexity: #8b5cf6;
+  --claude: #4F6EF7;
+  --gpt4o: #10B981;
+  --codestral: #F59E0B;
+  --gemini: #3B82F6;
+  --perplexity: #8B5CF6;
 
-  --font-sans: 'Syne', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Syne', system-ui, sans-serif;
+  --font-sans: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'JetBrains Mono', monospace;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 * {
@@ -30,13 +34,34 @@
   margin: 0;
 }
 
+::selection {
+  background: rgba(79, 110, 247, 0.3);
+  color: #F1F5F9;
+}
+
 body {
   background: var(--background);
   color: var(--text-primary);
   font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Scroll-fade utility ─────────────────────────────────────── */
+.section-fade {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.section-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Keyframes ────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -47,9 +72,24 @@ body {
   to   { opacity: 1; }
 }
 
+@keyframes word-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typewriter-line {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50%       { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
 }
 
 @keyframes slide-in-right {
@@ -62,6 +102,12 @@ body {
   50%       { opacity: 0; }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Animation utility classes ────────────────────────────────── */
 .animate-fade-up {
   animation: fadeUp 0.6s ease forwards;
   opacity: 0;
@@ -72,16 +118,23 @@ body {
   opacity: 0;
 }
 
+.animate-word {
+  display: inline-block;
+  animation: word-fade-up 0.5s ease forwards;
+  opacity: 0;
+}
+
+/* ── Delay utilities ──────────────────────────────────────────── */
+.delay-0   { animation-delay: 0ms; }
+.delay-80  { animation-delay: 80ms; }
 .delay-100 { animation-delay: 100ms; }
+.delay-160 { animation-delay: 160ms; }
 .delay-200 { animation-delay: 200ms; }
+.delay-240 { animation-delay: 240ms; }
 .delay-300 { animation-delay: 300ms; }
+.delay-320 { animation-delay: 320ms; }
 .delay-400 { animation-delay: 400ms; }
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
