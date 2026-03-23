@@ -10,6 +10,7 @@ import {
 import type {
   OrchestratorTask,
   ModelResponse,
+  ModelRole,
   ProjectStateDoc,
   ReviewEntry,
 } from '@/types'
