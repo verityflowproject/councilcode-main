@@ -40,7 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!existing) {
           await User.create({
             email: user.email,
-            name: user.name ?? 'CouncilCode User',
+            name: user.name ?? 'VerityFlow User',
             image: user.image ?? undefined,
             plan: 'free',
             modelCallsUsed: 0,

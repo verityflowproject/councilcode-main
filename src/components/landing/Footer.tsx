@@ -31,7 +31,7 @@ export default function Footer() {
                 marginBottom: '8px',
               }}
             >
-              Council<span style={{ color: 'var(--accent-blue)' }}>Code</span>
+              Verity<span style={{ color: 'var(--accent-blue)' }}>Flow</span>
             </span>
             <p
               style={{
@@ -158,7 +158,7 @@ export default function Footer() {
             fontFamily: 'var(--font-mono)',
           }}
         >
-          <span>© {new Date().getFullYear()} CouncilCode</span>
+          <span>© {new Date().getFullYear()} VerityFlow</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span
               style={{

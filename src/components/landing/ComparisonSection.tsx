@@ -105,7 +105,7 @@ export default function ComparisonSection() {
             }}
           >
             <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>
-              CouncilCode
+              VerityFlow
             </span>
             <span
               style={{

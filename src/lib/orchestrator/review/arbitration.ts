@@ -84,7 +84,7 @@ function buildArbitrationPrompt(
   }
 
   return `
-You are Claude, the Architect and final arbiter on the CouncilCode engineering team. Two models have produced conflicting outputs for the same task. You must resolve this conflict definitively.
+You are Claude, the Architect and final arbiter on the VerityFlow engineering team. Two models have produced conflicting outputs for the same task. You must resolve this conflict definitively.
 
 Original task:
 ${conflict.prompt}

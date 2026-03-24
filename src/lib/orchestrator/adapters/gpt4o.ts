@@ -10,7 +10,7 @@ const client = new OpenAI({
 const MODEL = 'gpt-5.4'
 
 function buildSystemPrompt(taskType: string): string {
-  const base = `You are GPT-5.4, the Generalist and primary Reviewer on an AI engineering team called CouncilCode. You are responsible for broad implementation tasks, API integrations, and cross-checking other models' outputs for correctness, hallucinations, and security issues. You are thorough and precise. When reviewing, you always return structured JSON.`
+  const base = `You are GPT-5.4, the Generalist and primary Reviewer on an AI engineering team called VerityFlow. You are responsible for broad implementation tasks, API integrations, and cross-checking other models' outputs for correctness, hallucinations, and security issues. You are thorough and precise. When reviewing, you always return structured JSON.`
 
   const taskInstructions: Record<string, string> = {
     implementation: `Your current task is IMPLEMENTATION. Write clean, production-ready code following the project conventions in your context. Add inline comments for any non-obvious logic.`,

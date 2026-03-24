@@ -41,7 +41,7 @@ export default function Navbar() {
             letterSpacing: '-0.02em',
           }}
         >
-          Council<span style={{ color: 'var(--accent-blue)' }}>Code</span>
+          Verity<span style={{ color: 'var(--accent-blue)' }}>Flow</span>
         </span>
         <span
           style={{

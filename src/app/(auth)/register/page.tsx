@@ -118,7 +118,7 @@ export default function RegisterPage() {
           className="relative text-xs font-mono"
           style={{ color: 'var(--text-muted)' }}
         >
-          © {new Date().getFullYear()} CouncilCode
+          © {new Date().getFullYear()} VerityFlow
         </p>
       </div>
 

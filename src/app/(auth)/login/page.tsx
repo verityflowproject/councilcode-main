@@ -52,7 +52,7 @@ export default function LoginPage() {
             >
               &ldquo;Other tools forget.
               <br />
-              <span style={{ color: 'var(--accent)' }}>CouncilCode remembers.&rdquo;</span>
+              <span style={{ color: 'var(--accent)' }}>VerityFlow remembers.&rdquo;</span>
             </p>
             <p
               className="text-sm leading-relaxed"
@@ -97,7 +97,7 @@ export default function LoginPage() {
           className="relative text-xs font-mono"
           style={{ color: 'var(--text-muted)' }}
         >
-          © {new Date().getFullYear()} CouncilCode
+          © {new Date().getFullYear()} VerityFlow
         </p>
       </div>
 

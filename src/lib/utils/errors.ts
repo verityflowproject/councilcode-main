@@ -1,15 +1,15 @@
-export class CouncilCodeError extends Error {
+export class VerityFlowError extends Error {
   constructor(
     message: string,
     public readonly code: string,
     public readonly statusCode: number = 500
   ) {
     super(message)
-    this.name = 'CouncilCodeError'
+    this.name = 'VerityFlowError'
   }
 }
 
-export class ModelAdapterError extends CouncilCodeError {
+export class ModelAdapterError extends VerityFlowError {
   constructor(
     message: string,
     public readonly model: string,
@@ -20,28 +20,28 @@ export class ModelAdapterError extends CouncilCodeError {
   }
 }
 
-export class RateLimitError extends CouncilCodeError {
+export class RateLimitError extends VerityFlowError {
   constructor(public readonly model: string) {
     super(`Rate limit exceeded for model: ${model}`, 'RATE_LIMIT_ERROR', 429)
     this.name = 'RateLimitError'
   }
 }
 
-export class UsageLimitError extends CouncilCodeError {
+export class UsageLimitError extends VerityFlowError {
   constructor() {
     super('Monthly usage limit reached. Please upgrade your plan.', 'USAGE_LIMIT_ERROR', 403)
     this.name = 'UsageLimitError'
   }
 }
 
-export class ProjectStateError extends CouncilCodeError {
+export class ProjectStateError extends VerityFlowError {
   constructor(message: string) {
     super(message, 'PROJECT_STATE_ERROR', 500)
     this.name = 'ProjectStateError'
   }
 }
 
-export class FirewallBlockError extends CouncilCodeError {
+export class FirewallBlockError extends VerityFlowError {
   constructor(public readonly reason: string) {
     super(`Request blocked by hallucination firewall: ${reason}`, 'FIREWALL_BLOCK_ERROR', 422)
     this.name = 'FirewallBlockError'
@@ -53,7 +53,7 @@ export function serializeError(err: unknown): {
   code: string
   statusCode: number
 } {
-  if (err instanceof CouncilCodeError) {
+  if (err instanceof VerityFlowError) {
     return {
       message: err.message,
       code: err.code,

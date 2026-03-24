@@ -117,7 +117,7 @@ export default function Hero() {
         <h1
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(52px, 7vw, 88px)',
+            fontSize: 'clamp(60px, 8vw, 104px)',
             fontWeight: 800,
             lineHeight: 1.0,
             letterSpacing: '-0.04em',
@@ -130,13 +130,15 @@ export default function Hero() {
           <span className="animate-word delay-100" style={{ marginRight: '0.22em' }}>Your</span>
           <span className="animate-word delay-160" style={{ marginRight: '0.22em' }}>AI</span>
           <span
-            className="animate-word delay-240"
+            className="animate-word delay-240 gradient-shift"
             style={{
               marginRight: '0.22em',
-              background: 'linear-gradient(135deg, #4361EE 0%, #06B6D4 100%)',
+              background: 'linear-gradient(90deg, #4361EE 0%, #06B6D4 25%, #9580FF 50%, #4361EE 75%, #06B6D4 100%)',
+              backgroundSize: '300% 100%',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              filter: 'drop-shadow(0 0 28px rgba(67,97,238,0.55))',
             }}
           >
             Engineering
@@ -148,16 +150,16 @@ export default function Hero() {
         <p
           className="animate-fade-up delay-300"
           style={{
-            fontSize: '18px',
+            fontSize: '22px',
             color: 'var(--text-secondary)',
             fontWeight: 300,
-            maxWidth: '520px',
+            maxWidth: '600px',
             margin: '0 auto 48px',
             textAlign: 'center',
             lineHeight: 1.7,
           }}
         >
-          CouncilCode deploys <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>five specialized AI models</strong> that
+          VerityFlow deploys <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>five specialized AI models</strong>{' '}that
           collaborate as a structured team — reviewing each other&apos;s work, resolving conflicts,
           and shipping code you can <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>actually trust</strong>.
         </p>

@@ -37,7 +37,7 @@ export default async function DashboardLayout({
               fontFamily: 'var(--font-display)',
             }}
           >
-            Council<span style={{ color: 'var(--accent)' }}>Code</span>
+            Verity<span style={{ color: 'var(--accent)' }}>Flow</span>
           </Link>
 
           <div className="flex items-center gap-4">

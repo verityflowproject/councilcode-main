@@ -4,19 +4,19 @@ import { useState } from 'react'
 
 const FAQS = [
   {
-    question: "How is CouncilCode different from GitHub Copilot or Cursor?",
+    question: "How is VerityFlow different from GitHub Copilot or Cursor?",
     answer:
-      "Copilot and Cursor are single-model autocomplete tools — they suggest code based on context but have no memory, no review process, and no accountability. CouncilCode runs five specialized models in a structured pipeline: one verifies your dependencies, one designs architecture, one writes code, one reviews every output, and one sweeps your entire codebase for consistency. No model ever reviews its own work. That's a fundamental difference in quality guarantees.",
+      "Copilot and Cursor are single-model autocomplete tools — they suggest code based on context but have no memory, no review process, and no accountability. VerityFlow runs five specialized models in a structured pipeline: one verifies your dependencies, one designs architecture, one writes code, one reviews every output, and one sweeps your entire codebase for consistency. No model ever reviews its own work. That's a fundamental difference in quality guarantees.",
   },
   {
-    question: "How does CouncilCode actually prevent hallucinations?",
+    question: "How does VerityFlow actually prevent hallucinations?",
     answer:
       "Before a single line of code is written, Perplexity Sonar Pro — our Researcher model — verifies every library, package version, and external API against live documentation. If it can't confirm something exists and works as described, it blocks it. This firewall runs on every implementation and architecture task. You'll never get a convincingly-written import for a package that doesn't exist.",
   },
   {
     question: "Does context persist between sessions?",
     answer:
-      "Yes. CouncilCode maintains a living ProjectState document for every project, stored in Redis for fast reads and synced to MongoDB for durability. It tracks your architecture decisions, data models, API routes, naming conventions, and open questions. Every model reads from this shared memory, so context never drifts — even on large codebases across multiple sessions.",
+      "Yes. VerityFlow maintains a living ProjectState document for every project, stored in Redis for fast reads and synced to MongoDB for durability. It tracks your architecture decisions, data models, API routes, naming conventions, and open questions. Every model reads from this shared memory, so context never drifts — even on large codebases across multiple sessions.",
   },
   {
     question: "What languages and frameworks are supported?",
@@ -31,7 +31,7 @@ const FAQS = [
   {
     question: "How does the pricing compare to hiring a developer?",
     answer:
-      "A junior developer costs $60–100k/year. CouncilCode Pro is $29/month for 2,000 model calls — that's five AI specialists available 24/7, with no onboarding, no sick days, and no context loss between tasks. For early-stage founders and solo engineers, it's a team that fits a startup budget.",
+      "A junior developer costs $60–100k/year. VerityFlow Pro is $29/month for 2,000 model calls — that's five AI specialists available 24/7, with no onboarding, no sick days, and no context loss between tasks. For early-stage founders and solo engineers, it's a team that fits a startup budget.",
   },
   {
     question: "Is my code and project data private?",
@@ -39,9 +39,9 @@ const FAQS = [
       "Yes. Every project runs in an isolated environment with its own ProjectState. Your code and session data are never shared between users or used for training any of the underlying models. You own your data.",
   },
   {
-    question: "Can I use CouncilCode on an existing codebase?",
+    question: "Can I use VerityFlow on an existing codebase?",
     answer:
-      "Yes. You can describe your existing project and CouncilCode will build a ProjectState from it — architecture decisions, conventions, known dependencies. Gemini's 2M token context window means it can read your entire codebase at once and reason about it holistically, rather than just the file you have open.",
+      "Yes. You can describe your existing project and VerityFlow will build a ProjectState from it — architecture decisions, conventions, known dependencies. Gemini's 2M token context window means it can read your entire codebase at once and reason about it holistically, rather than just the file you have open.",
   },
 ]
 
