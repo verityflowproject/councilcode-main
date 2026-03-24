@@ -240,3 +240,32 @@ body::after {
 .delay-600 { animation-delay: 600ms; }
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH PAGE COMPONENT STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.auth-btn-ghost {
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.auth-btn-ghost:hover {
+  border-color: var(--border-strong) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+.auth-btn-primary {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.auth-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(67,97,238,0.6), 0 0 40px rgba(67,97,238,0.3) !important;
+}
+
+.auth-input {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-input:focus {
+  border-color: rgba(67,97,238,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.1) !important;
+  outline: none;
+}
