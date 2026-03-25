@@ -1,10 +1,10 @@
 import OpenAI from 'openai'
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
-import { ModelAdapterError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
+import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+const defaultClient = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY ?? 'missing',
 })
 
 const MODEL = 'gpt-5.4'
@@ -27,14 +27,19 @@ If approved is false, patch must contain corrected code.`,
   return `${base}\n\n${taskInstructions[taskType] ?? 'Complete the task carefully following project conventions.'}`
 }
 
-export async function runGpt4o(task: OrchestratorTask): Promise<ModelResponse> {
+export async function runGpt4o(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
+  const resolvedKey = apiKey ?? process.env.OPENAI_API_KEY
+  if (!resolvedKey) throw new MissingApiKeyError('openai')
+
+  const c = apiKey ? new OpenAI({ apiKey }) : defaultClient
+
   try {
     const contextBlock = Object.keys(task.context).length > 0
       ? `\n\n--- Project context ---\n${JSON.stringify(task.context, null, 2)}`
       : ''
 
     const response = await withRetry(
-      () => client.responses.create({
+      () => c.responses.create({
         model: MODEL,
         instructions: buildSystemPrompt(task.taskType),
         input: `${task.prompt}${contextBlock}`,
@@ -67,6 +72,7 @@ export async function runGpt4o(task: OrchestratorTask): Promise<ModelResponse> {
       tokensUsed,
     }
   } catch (err: unknown) {
+    if (err instanceof MissingApiKeyError) throw err
     console.error('[GPT-5.4 adapter] error:', err)
     if (isRateLimitError(err)) throw new RateLimitError('gpt4o')
     throw new ModelAdapterError(

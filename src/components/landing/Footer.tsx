@@ -41,7 +41,7 @@ export default function Footer() {
                 maxWidth: '260px',
               }}
             >
-              Five AI models. One codebase. Zero hallucinations.
+              Five AI models. Your keys. Zero hallucinations.
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export default function Footer() {
             {[
               { label: 'How it works', href: '#how-it-works' },
               { label: 'The council', href: '#council' },
-              { label: 'FAQ', href: '#faq' },
+              { label: 'FAQ', href: '/faq' },
             ].map((link) => (
               <a
                 key={link.href}
@@ -86,6 +86,23 @@ export default function Footer() {
                 {link.label}
               </a>
             ))}
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                marginTop: '6px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                color: 'var(--accent-blue)',
+                background: 'rgba(67,97,238,0.08)',
+                border: '1px solid rgba(67,97,238,0.2)',
+                borderRadius: '4px',
+                padding: '3px 8px',
+              }}
+            >
+              🔑 BYOK — zero markup
+            </span>
           </div>
 
           {/* Account column */}

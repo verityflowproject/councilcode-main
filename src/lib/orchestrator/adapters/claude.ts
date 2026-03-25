@@ -1,10 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
-import { ModelAdapterError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
+import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
+const defaultClient = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY ?? 'missing',
 })
 
 const MODEL = 'claude-opus-4-6'
@@ -22,7 +22,12 @@ function buildSystemPrompt(taskType: string): string {
   return `${base}\n\n${taskInstructions[taskType] ?? 'Complete the task to the best of your ability following project conventions.'}`
 }
 
-export async function runClaude(task: OrchestratorTask): Promise<ModelResponse> {
+export async function runClaude(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
+  const resolvedKey = apiKey ?? process.env.ANTHROPIC_API_KEY
+  if (!resolvedKey) throw new MissingApiKeyError('anthropic')
+
+  const c = apiKey ? new Anthropic({ apiKey }) : defaultClient
+
   const _start = Date.now()
   try {
     const contextBlock = Object.keys(task.context).length > 0
@@ -30,7 +35,7 @@ export async function runClaude(task: OrchestratorTask): Promise<ModelResponse> 
       : ''
 
     const message = await withRetry(
-      () => client.messages.create({
+      () => c.messages.create({
         model: MODEL,
         max_tokens: 4096,
         system: buildSystemPrompt(task.taskType),
@@ -59,6 +64,7 @@ export async function runClaude(task: OrchestratorTask): Promise<ModelResponse> 
       tokensUsed,
     }
   } catch (err: unknown) {
+    if (err instanceof MissingApiKeyError) throw err
     console.error('[Claude adapter] error:', err)
     if (isRateLimitError(err)) throw new RateLimitError('claude')
     throw new ModelAdapterError(

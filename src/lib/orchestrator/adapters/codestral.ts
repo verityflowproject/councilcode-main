@@ -1,24 +1,29 @@
 import { Mistral } from '@mistralai/mistralai'
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
-import { ModelAdapterError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
+import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
 
-const client = new Mistral({
-  apiKey: process.env.MISTRAL_API_KEY!,
+const defaultClient = new Mistral({
+  apiKey: process.env.MISTRAL_API_KEY ?? 'missing',
 })
 
 const MODEL = 'codestral-latest'
 
 const SYSTEM_PROMPT = `You are Codestral, the Implementer on an AI engineering team called VerityFlow. Your job is fast, accurate code generation. You write clean, typed, production-ready code. You strictly follow the project conventions and architecture decisions provided in your context. You never invent library methods or APIs — if you are unsure whether a method exists, you leave a TODO comment flagging it for the researcher to verify. Output code only, with minimal prose unless explaining a non-obvious decision.`
 
-export async function runCodestral(task: OrchestratorTask): Promise<ModelResponse> {
+export async function runCodestral(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
+  const resolvedKey = apiKey ?? process.env.MISTRAL_API_KEY
+  if (!resolvedKey) throw new MissingApiKeyError('mistral')
+
+  const c = apiKey ? new Mistral({ apiKey }) : defaultClient
+
   try {
     const contextBlock = Object.keys(task.context).length > 0
       ? `\n\n--- Project context ---\n${JSON.stringify(task.context, null, 2)}`
       : ''
 
     const response = await withRetry(
-      () => client.chat.complete({
+      () => c.chat.complete({
         model: MODEL,
         messages: [
           {
@@ -51,6 +56,7 @@ export async function runCodestral(task: OrchestratorTask): Promise<ModelRespons
       tokensUsed,
     }
   } catch (err: unknown) {
+    if (err instanceof MissingApiKeyError) throw err
     console.error('[Codestral adapter] error:', err)
     if (isRateLimitError(err)) throw new RateLimitError('codestral')
     throw new ModelAdapterError(

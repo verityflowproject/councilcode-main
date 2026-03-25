@@ -1,6 +1,6 @@
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
-import { ModelAdapterError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
+import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
 
 const MODEL = 'sonar-pro'
 const API_URL = 'https://api.perplexity.ai/chat/completions'
@@ -13,7 +13,10 @@ const SYSTEM_PROMPT = `You are Sonar Pro, the Researcher on an AI engineering te
 }
 Do not include any text outside the JSON object.`
 
-export async function runPerplexity(task: OrchestratorTask): Promise<ModelResponse> {
+export async function runPerplexity(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
+  const resolvedKey = apiKey ?? process.env.PERPLEXITY_API_KEY
+  if (!resolvedKey) throw new MissingApiKeyError('perplexity')
+
   try {
     const contextBlock = Object.keys(task.context).length > 0
       ? `\n\n--- Project dependencies context ---\n${JSON.stringify(task.context.dependencies ?? {}, null, 2)}`
@@ -24,7 +27,7 @@ export async function runPerplexity(task: OrchestratorTask): Promise<ModelRespon
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+            'Authorization': `Bearer ${resolvedKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -85,6 +88,7 @@ export async function runPerplexity(task: OrchestratorTask): Promise<ModelRespon
       tokensUsed,
     }
   } catch (err: unknown) {
+    if (err instanceof MissingApiKeyError) throw err
     console.error('[Perplexity adapter] error:', err)
     if (isRateLimitError(err)) throw new RateLimitError('perplexity')
     throw new ModelAdapterError(

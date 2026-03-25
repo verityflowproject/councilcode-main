@@ -227,12 +227,26 @@ export default function Hero() {
           </a>
         </div>
 
+        {/* BYOK trust badge */}
+        <div className="animate-fade-up delay-450" style={{ textAlign: 'center', marginBottom: '12px' }}>
+          <span
+            style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              fontFamily: 'var(--font-mono)',
+            }}
+          >
+            🔑 Bring your own keys — no API markup
+          </span>
+        </div>
+
         {/* Trust signals */}
         <div className="animate-fade-up delay-500" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '24px', marginBottom: '0' }}>
           {[
             'Zero hallucinations',
             'Context never drifts',
             'Every line reviewed',
+            'Bring your own keys',
           ].map((signal) => (
             <span
               key={signal}

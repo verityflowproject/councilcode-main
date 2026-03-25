@@ -87,7 +87,8 @@ export default async function PricingPage() {
           style={{ color: 'var(--text-secondary)' }}
         >
           Every plan includes all five models, the full review pipeline,
-          and the hallucination firewall. Upgrade for more sessions.
+          and the hallucination firewall. Bring your own API keys — you
+          pay providers directly, no markup. Upgrade for more sessions.
         </p>
       </div>
 
@@ -164,6 +165,12 @@ export default async function PricingPage() {
                 >
                   {plan.calls} council sessions/mo
                 </p>
+                <p
+                  className="text-xs font-mono"
+                  style={{ color: 'var(--text-muted)', marginTop: '4px' }}
+                >
+                  🔑 BYOK required · pay providers directly
+                </p>
               </div>
 
               {/* Features */}
@@ -233,20 +240,24 @@ export default async function PricingPage() {
         >
           Common questions
         </h3>
-        {[
-          {
-            q: 'What counts as a council session?',
-            a: 'Each prompt you submit to the council counts as one session, regardless of how many models are invoked internally.',
-          },
-          {
-            q: 'Do unused sessions roll over?',
-            a: 'No — session counts reset monthly on your billing date.',
-          },
-          {
-            q: 'Can I cancel anytime?',
-            a: 'Yes. Cancel through the billing portal at any time. You keep Pro/Teams access until the end of your billing period.',
-          },
-        ].map((item) => (
+          {[
+            {
+              q: 'Do I need to bring my own API keys?',
+              a: 'Yes — VerityFlow is a BYOK (Bring Your Own Key) platform. Connect your Anthropic, OpenAI, Mistral, Google AI, and Perplexity keys in Settings → API Keys. You pay each provider directly at cost; VerityFlow charges only for the orchestration layer.',
+            },
+            {
+              q: 'What counts as a council session?',
+              a: 'Each prompt you submit to the council counts as one session, regardless of how many models are invoked internally.',
+            },
+            {
+              q: 'Do unused sessions roll over?',
+              a: 'No — session counts reset monthly on your billing date.',
+            },
+            {
+              q: 'Can I cancel anytime?',
+              a: 'Yes. Cancel through the billing portal at any time. You keep Pro/Teams access until the end of your billing period.',
+            },
+          ].map((item) => (
           <div key={item.q} className="space-y-1">
             <p
               className="text-sm font-medium"

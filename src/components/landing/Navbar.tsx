@@ -69,7 +69,7 @@ export default function Navbar() {
         {[
           { label: 'How it works', href: '#how-it-works' },
           { label: 'The council', href: '#council' },
-          { label: 'FAQ', href: '#faq' },
+          { label: 'FAQ', href: '/faq' },
         ].map((link) => (
           <a
             key={link.href}

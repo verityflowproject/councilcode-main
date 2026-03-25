@@ -24,20 +24,22 @@ import { batchReview } from './review/pipeline'
 import { runHallucinationFirewall } from './review/hallucination'
 import { detectConflict, runBatchArbitration } from './review/arbitration'
 import type { ConflictCandidate, BatchArbitrationResult } from './review/arbitration'
+import { getUserApiKeys } from '@/lib/get-user-keys'
+import type { UserKeySet } from '@/lib/get-user-keys'
 
 // --- Adapter dispatch ---
-async function runAdapter(task: OrchestratorTask): Promise<ModelResponse> {
+async function runAdapter(task: OrchestratorTask, userKeys: UserKeySet): Promise<ModelResponse> {
   switch (task.assignedModel) {
     case 'claude':
-      return runClaude(task)
+      return runClaude(task, userKeys.anthropicKey ?? undefined)
     case 'gpt4o':
-      return runGpt4o(task)
+      return runGpt4o(task, userKeys.openaiKey ?? undefined)
     case 'codestral':
-      return runCodestral(task)
+      return runCodestral(task, userKeys.mistralKey ?? undefined)
     case 'gemini':
-      return runGemini(task)
+      return runGemini(task, userKeys.googleAiKey ?? undefined)
     case 'perplexity':
-      return runPerplexity(task)
+      return runPerplexity(task, userKeys.perplexityKey ?? undefined)
     default:
       throw new Error(`Unknown model: ${task.assignedModel}`)
   }
@@ -47,7 +49,8 @@ async function runAdapter(task: OrchestratorTask): Promise<ModelResponse> {
 export async function runOrchestrator(
   projectId: string,
   userPrompt: string,
-  sessionId: string
+  sessionId: string,
+  userId: string
 ): Promise<{
   responses: ModelResponse[]
   reviewedOutputs: {
@@ -75,6 +78,9 @@ export async function runOrchestrator(
   if (!state) {
     throw new Error(`[Orchestrator] No ProjectState found for project ${projectId}`)
   }
+
+  // 1b. Load user API keys (user keys take priority over platform env keys)
+  const userKeys = await getUserApiKeys(userId)
 
   // 2. Update currentTask in state
   const _taskType = classifyTask(userPrompt)
@@ -129,7 +135,7 @@ export async function runOrchestrator(
         }
       }
 
-      const response = await runAdapter(enrichedTask)
+      const response = await runAdapter(enrichedTask, userKeys)
       responses.push(response)
 
       // Store research findings for downstream tasks

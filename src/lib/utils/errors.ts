@@ -48,11 +48,32 @@ export class FirewallBlockError extends VerityFlowError {
   }
 }
 
+export class MissingApiKeyError extends VerityFlowError {
+  readonly model: string
+  readonly settingsUrl = '/dashboard/settings/api-keys'
+  constructor(model: string) {
+    super(`Missing API key for ${model}`, 'MISSING_API_KEY', 422)
+    this.name = 'MissingApiKeyError'
+    this.model = model
+  }
+}
+
 export function serializeError(err: unknown): {
   message: string
   code: string
   statusCode: number
+  model?: string
+  settingsUrl?: string
 } {
+  if (err instanceof MissingApiKeyError) {
+    return {
+      message: err.message,
+      code: err.code,
+      statusCode: 422,
+      model: err.model,
+      settingsUrl: err.settingsUrl,
+    }
+  }
   if (err instanceof VerityFlowError) {
     return {
       message: err.message,

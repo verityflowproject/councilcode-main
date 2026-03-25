@@ -5,7 +5,7 @@ import { connectDB } from '@/lib/db/mongoose'
 import { Project } from '@/lib/models/Project'
 import { User } from '@/lib/models/User'
 import { logUsage } from '@/lib/utils/usageLogger'
-import { serializeError, UsageLimitError } from '@/lib/utils/errors'
+import { serializeError, UsageLimitError, MissingApiKeyError } from '@/lib/utils/errors'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Run orchestrator
-    const result = await runOrchestrator(projectId, prompt, sessionId)
+    const result = await runOrchestrator(projectId, prompt, sessionId, session.user.id)
 
     // Increment usage counter
     await User.findByIdAndUpdate(session.user.id, {
@@ -90,6 +90,12 @@ export async function POST(req: NextRequest) {
     )
   } catch (err: unknown) {
     console.error('[/api/orchestrator] error:', err)
+    if (err instanceof MissingApiKeyError) {
+      return NextResponse.json(
+        { error: 'Missing API key', model: err.model, settingsUrl: err.settingsUrl },
+        { status: 422 }
+      )
+    }
     const { message, statusCode } = serializeError(err)
     return NextResponse.json({ error: message }, { status: statusCode })
   }

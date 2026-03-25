@@ -90,7 +90,7 @@ export default function CTASection() {
           marginTop: '16px',
         }}
       >
-        Free tier: 50 model calls/month. No credit card required.
+        Free tier: 50 model calls/month · Bring your own API keys · No credit card required.
       </p>
     </section>
   )

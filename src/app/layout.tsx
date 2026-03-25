@@ -4,11 +4,11 @@ import '@/styles/globals.css'
 export const metadata: Metadata = {
   title: 'VerityFlow — Your AI Engineering Firm',
   description:
-    'Five AI models collaborate as a structured engineering team to build your project. Zero hallucinations. Persistent context. Code quality that never drifts.',
+    'Five AI models collaborate as a structured engineering team — zero hallucinations, persistent context, bring your own API keys. Your AI Council. Your costs. No markup.',
   openGraph: {
     title: 'VerityFlow — Your AI Engineering Firm',
     description:
-      'Five AI models. One codebase. Every line fact-checked before you see it.',
+      'Five AI models. Your keys. Every line reviewed before you see it.',
   },
 }
 

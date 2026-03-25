@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import ProjectCard from '@/components/dashboard/ProjectCard'
 import NewProjectModal from '@/components/dashboard/NewProjectModal'
 import UsageWarningBanner from '@/components/dashboard/UsageWarningBanner'
+import KeysIncompleteBanner from '@/components/dashboard/KeysIncompleteBanner'
 import type { IProject } from '@/lib/models'
 
 type ProjectWithId = IProject & { _id: string }
@@ -14,6 +15,7 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<ProjectWithId[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [missingKeyCount, setMissingKeyCount] = useState(0)
 
   const fetchProjects = async () => {
     try {
@@ -27,8 +29,22 @@ export default function DashboardPage() {
     }
   }
 
+  const fetchKeyStatus = async () => {
+    try {
+      const res = await fetch('/api/user/api-keys')
+      if (!res.ok) return
+      const data = await res.json()
+      const fields = ['anthropicKey', 'openaiKey', 'mistralKey', 'googleAiKey', 'perplexityKey']
+      const missing = fields.filter((f) => !data[f]).length
+      setMissingKeyCount(missing)
+    } catch {
+      // fail silently — banner simply won't show
+    }
+  }
+
   useEffect(() => {
     fetchProjects()
+    fetchKeyStatus()
   }, [])
 
   const handleDelete = async (id: string) => {
@@ -80,6 +96,9 @@ export default function DashboardPage() {
           New project
         </button>
       </div>
+
+      {/* Keys incomplete banner */}
+      <KeysIncompleteBanner missingCount={missingKeyCount} />
 
       {/* Usage warning banner */}
       {session?.user && (

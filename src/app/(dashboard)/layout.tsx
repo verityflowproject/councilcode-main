@@ -52,6 +52,16 @@ export default async function DashboardLayout({
               Usage
             </Link>
             <Link
+              href="/dashboard/settings/api-keys"
+              className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-all duration-150 hover:border-accent hidden sm:block"
+              style={{
+                borderColor: 'var(--border)',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              API Keys
+            </Link>
+            <Link
               href="/dashboard/pricing"
               className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-all duration-150 hover:border-accent hidden sm:block"
               style={{
