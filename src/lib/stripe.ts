@@ -1,12 +1,24 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set')
+/**
+ * Lazy singleton — defers Stripe client creation to first use at request time.
+ * This lets the module be imported during the Next.js build without STRIPE_SECRET_KEY
+ * being present in the build environment.
+ */
+let _instance: Stripe | null = null
+
+function getInstance(): Stripe {
+  if (_instance) return _instance
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not set')
+  _instance = new Stripe(key, { apiVersion: '2026-02-25.clover', typescript: true })
+  return _instance
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2026-02-25.clover',
-  typescript: true,
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return (getInstance() as unknown as Record<string | symbol, unknown>)[prop]
+  },
 })
 
 // Plan definitions — create these products in your Stripe dashboard

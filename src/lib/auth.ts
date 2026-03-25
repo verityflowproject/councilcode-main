@@ -10,13 +10,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     }),
-    EmailProvider({
-      server: process.env.EMAIL_SERVER!,
-      from: process.env.EMAIL_FROM!,
-    }),
+    // EmailProvider validates Nodemailer config at initialization — only include
+    // it when EMAIL_SERVER is actually configured to prevent build-time crashes.
+    ...(process.env.EMAIL_SERVER
+      ? [
+          EmailProvider({
+            server: process.env.EMAIL_SERVER,
+            from: process.env.EMAIL_FROM ?? '',
+          }),
+        ]
+      : []),
   ],
   callbacks: {
     async session({ session, user }) {
