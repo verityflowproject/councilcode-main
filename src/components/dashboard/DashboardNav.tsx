@@ -26,7 +26,6 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
   const isGuest = !email
   const [balance, setBalance] = useState<number | null>(null)
   const [hasAnyKey, setHasAnyKey] = useState<boolean>(true)
-  const [hovered, setHovered] = useState<string | null>(null)
 
   useEffect(() => {
     if (isGuest) return
@@ -45,145 +44,115 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
     href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href)
 
   const showBalanceWarning = balance !== null && !hasAnyKey
-  const balanceCritical  = showBalanceWarning && balance < 20
-  const balanceWarning   = showBalanceWarning && balance < 50
-  const balanceColor = balanceCritical ? '#ef4444' : balanceWarning ? '#f59e0b' : 'var(--accent-blue)'
-  const balanceBorder = balanceCritical
-    ? 'rgba(239,68,68,0.35)'
+  const balanceCritical = showBalanceWarning && balance < 20
+  const balanceWarning  = showBalanceWarning && balance < 50
+  const balanceColor    = balanceCritical ? '#ef4444' : balanceWarning ? '#f59e0b' : 'var(--accent-blue)'
+  const balanceBg       = balanceCritical
+    ? 'rgba(239,68,68,0.08)'
     : balanceWarning
-    ? 'rgba(245,158,11,0.35)'
-    : 'rgba(67,97,238,0.3)'
+    ? 'rgba(245,158,11,0.08)'
+    : 'rgba(67,97,238,0.08)'
+  const balanceBorder   = balanceCritical
+    ? 'rgba(239,68,68,0.3)'
+    : balanceWarning
+    ? 'rgba(245,158,11,0.3)'
+    : 'rgba(67,97,238,0.25)'
+
+  const isPaid = plan === 'pro' || plan === 'teams'
 
   return (
     <nav
       style={{
         position: 'sticky',
         top: 0,
-        zIndex: 40,
-        height: '68px',
+        zIndex: 100,
+        height: '64px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 28px',
-        background: 'rgba(9,9,11,0.88)',
-        backdropFilter: 'blur(20px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        padding: '0 32px',
+        background: 'rgba(5,5,8,0.82)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         borderBottom: '1px solid var(--border-subtle)',
         gap: '24px',
       }}
     >
-
-      {/* ── Left: wordmark + FlowDash workspace chip ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-        <Link
-          href="/"
+      {/* ── Left: logo ── */}
+      <Link
+        href="/"
+        style={{
+          textDecoration: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          flexShrink: 0,
+        }}
+      >
+        <span
           style={{
-            textDecoration: 'none',
             fontFamily: 'var(--font-display)',
             fontWeight: 800,
-            fontSize: '17px',
-            letterSpacing: '-0.02em',
+            fontSize: '18px',
             color: 'var(--text-primary)',
+            letterSpacing: '-0.02em',
             lineHeight: 1,
           }}
         >
           Verity<span style={{ color: 'var(--accent-blue)' }}>Flow</span>
-        </Link>
-
-        <span style={{ color: 'var(--border-subtle)', fontSize: '16px', fontWeight: 300, userSelect: 'none' }}>
-          /
         </span>
+      </Link>
 
-        <Link
-          href="/dashboard"
-          style={{
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '0.02em',
-            color: 'var(--accent-blue)',
-            background: 'rgba(67,97,238,0.1)',
-            border: '1px solid rgba(67,97,238,0.22)',
-            borderRadius: '6px',
-            padding: '4px 10px',
-            transition: 'box-shadow 0.2s ease, background 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.background = 'rgba(67,97,238,0.16)'
-            el.style.boxShadow = '0 0 14px rgba(67,97,238,0.25)'
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.background = 'rgba(67,97,238,0.1)'
-            el.style.boxShadow = 'none'
-          }}
-        >
-          {/* tiny grid icon */}
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style={{ flexShrink: 0, opacity: 0.8 }}>
-            <rect x="0" y="0" width="4.5" height="4.5" rx="1" fill="currentColor" />
-            <rect x="6.5" y="0" width="4.5" height="4.5" rx="1" fill="currentColor" />
-            <rect x="0" y="6.5" width="4.5" height="4.5" rx="1" fill="currentColor" />
-            <rect x="6.5" y="6.5" width="4.5" height="4.5" rx="1" fill="currentColor" />
-          </svg>
-          flowdash
-        </Link>
-      </div>
-
-      {/* ── Center: primary nav ── */}
+      {/* ── Center: nav links ── */}
       <div
         className="hidden md:flex"
         style={{ alignItems: 'center', gap: '2px', flex: 1, justifyContent: 'center' }}
       >
         {NAV_LINKS.map((link) => {
           const active = isActive(link.href)
-          const isHov  = hovered === link.href
           return (
             <Link
               key={link.href}
               href={link.href}
-              onMouseEnter={() => setHovered(link.href)}
-              onMouseLeave={() => setHovered(null)}
               style={{
                 textDecoration: 'none',
-                position: 'relative',
                 display: 'inline-flex',
                 alignItems: 'center',
-                padding: '6px 14px',
-                borderRadius: '7px',
+                padding: '5px 12px',
+                borderRadius: '6px',
                 fontSize: '13px',
-                fontWeight: active ? 600 : 400,
-                letterSpacing: '-0.01em',
-                color: active
-                  ? 'var(--accent-blue)'
-                  : isHov
-                  ? 'var(--text-primary)'
-                  : 'var(--text-secondary)',
-                background: active
-                  ? 'rgba(67,97,238,0.1)'
-                  : isHov
-                  ? 'rgba(255,255,255,0.04)'
-                  : 'transparent',
+                fontWeight: active ? 500 : 400,
+                color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
                 transition: 'color 0.15s ease, background 0.15s ease',
+                position: 'relative',
+              }}
+              onMouseEnter={(e) => {
+                if (!active) {
+                  const el = e.currentTarget as HTMLAnchorElement
+                  el.style.color = 'var(--text-primary)'
+                  el.style.background = 'rgba(255,255,255,0.04)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!active) {
+                  const el = e.currentTarget as HTMLAnchorElement
+                  el.style.color = 'var(--text-secondary)'
+                  el.style.background = 'transparent'
+                }
               }}
             >
               {link.label}
-              {/* active underline */}
               {active && (
                 <span
                   style={{
                     position: 'absolute',
-                    bottom: '2px',
-                    left: '14px',
-                    right: '14px',
-                    height: '2px',
+                    bottom: '0px',
+                    left: '12px',
+                    right: '12px',
+                    height: '1.5px',
                     borderRadius: '2px',
                     background: 'var(--accent-blue)',
-                    boxShadow: '0 0 8px rgba(67,97,238,0.6)',
+                    opacity: 0.8,
                   }}
                 />
               )}
@@ -192,81 +161,46 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
         })}
       </div>
 
-      {/* ── Right: guest auth buttons OR authenticated user info ── */}
+      {/* ── Right: guest or authenticated ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
 
         {isGuest ? (
           <>
-            {/* Preview chip */}
-            <span
-              className="hidden sm:inline-flex"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--text-muted)',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '5px',
-                padding: '3px 8px',
-              }}
-            >
-              preview
-            </span>
-
-            <span style={{ width: '1px', height: '22px', background: 'var(--border-subtle)', flexShrink: 0 }} />
-
-            {/* Sign in */}
             <Link
               href="/login"
               style={{
-                textDecoration: 'none',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '12px',
                 color: 'var(--text-secondary)',
-                padding: '6px 12px',
-                borderRadius: '7px',
-                border: '1px solid var(--border-subtle)',
-                transition: 'color 0.15s ease, border-color 0.15s ease',
+                fontSize: '13px',
+                textDecoration: 'none',
+                padding: '5px 12px',
+                borderRadius: '6px',
+                transition: 'color 0.15s ease',
               }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = 'var(--text-primary)'
-                el.style.borderColor = 'rgba(255,255,255,0.2)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = 'var(--text-secondary)'
-                el.style.borderColor = 'var(--border-subtle)'
-              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)' }}
             >
               Sign in
             </Link>
-
-            {/* Get started */}
             <Link
               href="/register"
               style={{
-                textDecoration: 'none',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '12px',
-                fontWeight: 600,
-                color: '#fff',
                 background: 'var(--accent-blue)',
-                padding: '6px 14px',
-                borderRadius: '7px',
-                transition: 'opacity 0.15s ease, box-shadow 0.2s ease',
+                color: 'white',
+                borderRadius: 'var(--radius-sm)',
+                padding: '7px 16px',
+                fontSize: '13px',
+                fontWeight: 500,
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLAnchorElement
-                el.style.opacity = '0.88'
-                el.style.boxShadow = '0 0 18px rgba(67,97,238,0.4)'
+                el.style.background = '#3251d4'
+                el.style.boxShadow = '0 0 20px rgba(67,97,238,0.35)'
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget as HTMLAnchorElement
-                el.style.opacity = '1'
+                el.style.background = 'var(--accent-blue)'
                 el.style.boxShadow = 'none'
               }}
             >
@@ -275,33 +209,31 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
           </>
         ) : (
           <>
-            {/* Credit balance */}
+            {/* Credit balance — only show if fetched */}
             {balance !== null && (
               <Link
                 href="/dashboard/credits"
                 className="hidden sm:flex"
                 style={{
-                  textDecoration: 'none',
                   alignItems: 'center',
                   gap: '5px',
+                  textDecoration: 'none',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '12px',
                   color: balanceColor,
-                  background: balanceCritical
-                    ? 'rgba(239,68,68,0.08)'
-                    : balanceWarning
-                    ? 'rgba(245,158,11,0.08)'
-                    : 'rgba(67,97,238,0.08)',
+                  background: balanceBg,
                   border: `1px solid ${balanceBorder}`,
-                  borderRadius: '7px',
-                  padding: '5px 10px',
+                  borderRadius: '6px',
+                  padding: '4px 10px',
                   transition: 'opacity 0.15s ease',
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.75' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.7' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1' }}
               >
-                <span style={{ fontSize: '10px' }}>⚡</span>
-                <span>{balance.toLocaleString()}</span>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M5 0L6.18 3.82L10 5L6.18 6.18L5 10L3.82 6.18L0 5L3.82 3.82L5 0Z" fill="currentColor" />
+                </svg>
+                {balance.toLocaleString()}
               </Link>
             )}
 
@@ -311,43 +243,38 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
                 fontWeight: 600,
-                letterSpacing: '0.08em',
+                letterSpacing: '0.07em',
                 textTransform: 'uppercase',
-                color: plan === 'pro' || plan === 'teams' ? 'var(--accent-blue)' : 'var(--text-muted)',
-                background: plan === 'pro' || plan === 'teams'
-                  ? 'rgba(67,97,238,0.1)'
-                  : 'rgba(255,255,255,0.04)',
-                border: plan === 'pro' || plan === 'teams'
-                  ? '1px solid rgba(67,97,238,0.28)'
-                  : '1px solid var(--border-subtle)',
-                borderRadius: '5px',
-                padding: '3px 8px',
+                color: isPaid ? 'var(--accent-blue)' : 'var(--text-muted)',
+                background: isPaid ? 'rgba(67,97,238,0.1)' : 'rgba(255,255,255,0.04)',
+                border: isPaid ? '1px solid rgba(67,97,238,0.25)' : '1px solid var(--border-subtle)',
+                borderRadius: '4px',
+                padding: '3px 7px',
               }}
             >
               {plan ?? 'free'}
             </span>
 
             {/* Divider */}
-            <span style={{ width: '1px', height: '22px', background: 'var(--border-subtle)', flexShrink: 0 }} />
+            <span style={{ width: '1px', height: '20px', background: 'var(--border-subtle)', flexShrink: 0 }} />
 
-            {/* User avatar */}
+            {/* Avatar */}
             <div
               title={email ?? ''}
               style={{
-                width: '30px',
-                height: '30px',
+                width: '28px',
+                height: '28px',
                 borderRadius: '50%',
-                background: 'rgba(67,97,238,0.18)',
-                border: '1px solid rgba(67,97,238,0.35)',
+                background: 'rgba(67,97,238,0.15)',
+                border: '1px solid rgba(67,97,238,0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontFamily: 'var(--font-display)',
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: 700,
                 color: 'var(--accent-blue)',
                 flexShrink: 0,
-                boxShadow: '0 0 10px rgba(67,97,238,0.15)',
               }}
             >
               {initials(email)}
@@ -357,27 +284,17 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
             <Link
               href="/api/auth/signout"
               style={{
-                textDecoration: 'none',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
                 color: 'var(--text-muted)',
+                fontSize: '13px',
+                textDecoration: 'none',
                 padding: '5px 10px',
-                borderRadius: '7px',
-                border: '1px solid var(--border-subtle)',
-                transition: 'color 0.15s ease, border-color 0.15s ease',
+                borderRadius: '6px',
+                transition: 'color 0.15s ease',
               }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = 'var(--text-secondary)'
-                el.style.borderColor = 'rgba(255,255,255,0.15)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = 'var(--text-muted)'
-                el.style.borderColor = 'var(--border-subtle)'
-              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-muted)' }}
             >
-              out
+              Sign out
             </Link>
           </>
         )}
