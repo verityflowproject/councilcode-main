@@ -86,7 +86,7 @@ const BADGE_CONFIG: Record<NonNullable<BadgeType>, { label: string; color: strin
 function CouncilChatCard() {
   const [visible, setVisible] = useState(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const bottomRef = useRef<HTMLDivElement | null>(null)
+  const messagesRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     function scheduleNext(idx: number) {
@@ -111,7 +111,9 @@ function CouncilChatCard() {
   }, [])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+    }
   }, [visible])
 
   return (
@@ -165,7 +167,7 @@ function CouncilChatCard() {
       </div>
 
       {/* Messages */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, overflowY: 'hidden', minHeight: 0 }}>
+      <div ref={messagesRef} className="no-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
         {CHAT_MESSAGES.slice(0, visible).map((msg, i) => (
           <div
             key={i}
@@ -238,7 +240,6 @@ function CouncilChatCard() {
             ))}
           </div>
         )}
-        <div ref={bottomRef} style={{ flexShrink: 0 }} />
       </div>
     </div>
   )

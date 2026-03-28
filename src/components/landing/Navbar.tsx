@@ -2,6 +2,15 @@
 
 import Link from 'next/link'
 
+const NAV_LINKS = [
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'The council',  href: '/#council' },
+  { label: 'Compare',      href: '/compare' },
+  { label: 'FAQ',          href: '/faq' },
+  { label: 'Contact',      href: '/contact' },
+  { label: 'Dashboard',    href: '/dashboard' },
+]
+
 export default function Navbar() {
   return (
     <nav
@@ -11,15 +20,16 @@ export default function Navbar() {
         left: 0,
         right: 0,
         zIndex: 100,
-        padding: '0 40px',
+        padding: '0 32px',
         height: '64px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(5,5,8,0.7)',
+        background: 'rgba(5,5,8,0.75)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         borderBottom: '1px solid var(--border-subtle)',
+        gap: '24px',
       }}
     >
       {/* Logo */}
@@ -30,6 +40,7 @@ export default function Navbar() {
           display: 'flex',
           alignItems: 'center',
           gap: '0',
+          flexShrink: 0,
         }}
       >
         <span
@@ -53,7 +64,6 @@ export default function Navbar() {
             borderRadius: '4px',
             padding: '2px 6px',
             marginLeft: '8px',
-            verticalAlign: 'middle',
             lineHeight: '1.4',
           }}
         >
@@ -61,34 +71,33 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* Nav links — hidden on mobile */}
+      {/* Center nav links */}
       <div
         className="hidden md:flex"
-        style={{ alignItems: 'center', gap: '32px' }}
+        style={{ alignItems: 'center', gap: '4px', flex: 1, justifyContent: 'center' }}
       >
-        {[
-          { label: 'How it works', href: '#how-it-works' },
-          { label: 'The council', href: '#council' },
-          { label: 'Compare', href: '/compare' },
-          { label: 'FAQ', href: '/faq' },
-        ].map((link) => (
+        {NAV_LINKS.map((link) => (
           <a
             key={link.href}
             href={link.href}
             style={{
-              fontSize: '14px',
+              fontSize: '13px',
               color: 'var(--text-secondary)',
               fontWeight: 400,
               textDecoration: 'none',
-              transition: 'color 0.15s ease',
+              padding: '5px 10px',
+              borderRadius: '6px',
+              transition: 'color 0.15s ease, background 0.15s ease',
             }}
             onMouseEnter={(e) => {
-              ;(e.currentTarget as HTMLAnchorElement).style.color =
-                'var(--text-primary)'
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.color = 'var(--text-primary)'
+              el.style.background = 'rgba(255,255,255,0.05)'
             }}
             onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLAnchorElement).style.color =
-                'var(--text-secondary)'
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.color = 'var(--text-secondary)'
+              el.style.background = 'transparent'
             }}
           >
             {link.label}
@@ -97,22 +106,22 @@ export default function Navbar() {
       </div>
 
       {/* Right side */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
         <Link
           href="/login"
           style={{
             color: 'var(--text-secondary)',
-            fontSize: '14px',
+            fontSize: '13px',
             textDecoration: 'none',
+            padding: '5px 10px',
+            borderRadius: '6px',
             transition: 'color 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            ;(e.currentTarget as HTMLAnchorElement).style.color =
-              'var(--text-primary)'
+            ;(e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)'
           }}
           onMouseLeave={(e) => {
-            ;(e.currentTarget as HTMLAnchorElement).style.color =
-              'var(--text-secondary)'
+            ;(e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'
           }}
         >
           Sign in
@@ -123,7 +132,7 @@ export default function Navbar() {
             background: 'var(--accent-blue)',
             color: 'white',
             borderRadius: 'var(--radius-sm)',
-            padding: '8px 16px',
+            padding: '7px 16px',
             fontSize: '13px',
             fontWeight: 500,
             textDecoration: 'none',
