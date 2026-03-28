@@ -140,7 +140,6 @@ export default function Footer() {
                 borderRadius: '5px',
                 padding: '3px 8px',
                 marginBottom: '16px',
-                display: 'flex' as const,
                 width: 'fit-content',
               }}
             >
