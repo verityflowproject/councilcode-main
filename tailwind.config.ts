@@ -16,6 +16,7 @@ const config: Config = {
         'accent-cyan': 'var(--accent-cyan)',
         'accent-green':'var(--accent-green)',
         'accent-amber':'var(--accent-amber)',
+        'accent-red':  'var(--accent-red)',
         'text-primary':   'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-muted':     'var(--text-muted)',

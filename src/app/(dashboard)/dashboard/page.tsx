@@ -47,11 +47,11 @@ function DemoProjectCard({ project }: { project: ProjectWithId }) {
   const [hovered, setHovered] = useState(false)
 
   const STATUS_CONFIG = {
-    draft:    { label: 'Draft',      color: 'var(--text-muted)', bg: 'transparent',           border: 'var(--border)' },
-    building: { label: 'Building',   color: '#f59e0b',           bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
-    review:   { label: 'In review',  color: 'var(--accent)',     bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.3)' },
-    complete: { label: 'Complete',   color: '#10b981',           bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
-    error:    { label: 'Error',      color: '#ef4444',           bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
+    draft:    { label: 'Draft',      color: 'var(--text-muted)',   bg: 'transparent',           border: 'var(--border)' },
+    building: { label: 'Building',   color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
+    review:   { label: 'In review',  color: 'var(--accent)',       bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.3)' },
+    complete: { label: 'Complete',   color: 'var(--accent-green)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+    error:    { label: 'Error',      color: 'var(--accent-red)',   bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
   }
   const s = STATUS_CONFIG[project.status] ?? STATUS_CONFIG.draft
   const isActive = project.status === 'building' || project.status === 'review'

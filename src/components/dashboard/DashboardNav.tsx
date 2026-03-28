@@ -46,7 +46,7 @@ export default function DashboardNav({ email, plan }: DashboardNavProps) {
   const showBalanceWarning = balance !== null && !hasAnyKey
   const balanceCritical = showBalanceWarning && balance < 20
   const balanceWarning  = showBalanceWarning && balance < 50
-  const balanceColor    = balanceCritical ? '#ef4444' : balanceWarning ? '#f59e0b' : 'var(--accent-blue)'
+  const balanceColor    = balanceCritical ? 'var(--accent-red)' : balanceWarning ? 'var(--accent-amber)' : 'var(--accent-blue)'
   const balanceBg       = balanceCritical
     ? 'rgba(239,68,68,0.08)'
     : balanceWarning

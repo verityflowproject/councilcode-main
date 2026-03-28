@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Navbar from '@/components/landing/Navbar'
+import Footer from '@/components/landing/Footer'
 
 export const metadata: Metadata = {
   title: 'VerityFlow vs Cursor, Copilot, Lovable & more | VerityFlow',
@@ -291,7 +293,7 @@ Or use VerityFlow Credits for zero-setup access — one purchase, all five model
 
 export default function ComparePage() {
   return (
-    <div
+    <main
       style={{
         background: 'var(--bg-base)',
         minHeight: '100vh',
@@ -299,8 +301,7 @@ export default function ComparePage() {
         fontFamily: 'var(--font-body)',
       }}
     >
-      {/* Nav spacer */}
-      <div style={{ height: '64px' }} />
+      <Navbar />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 40px' }}>
 
@@ -634,6 +635,7 @@ export default function ComparePage() {
         </p>
 
       </div>
-    </div>
+      <Footer />
+    </main>
   )
 }
