@@ -126,7 +126,8 @@ export async function runArbitration(
   projectId: string,
   sessionId: string,
   conflict: ConflictCandidate,
-  projectStateContext: object
+  projectStateContext: object,
+  userId: string
 ): Promise<ArbitrationResult> {
   const arbitrationPrompt = buildArbitrationPrompt(conflict, projectStateContext)
 
@@ -136,6 +137,7 @@ export async function runArbitration(
     prompt: arbitrationPrompt,
     assignedModel: 'claude',
     context: { projectId },
+    userId,
   }
 
   let claudeResponse: ModelResponse
@@ -253,7 +255,8 @@ export async function runBatchArbitration(
   projectId: string,
   sessionId: string,
   conflicts: ConflictCandidate[],
-  projectStateContext: object
+  projectStateContext: object,
+  userId: string
 ): Promise<BatchArbitrationResult> {
   const arbitrations: BatchArbitrationResult['arbitrations'] = []
   let totalArbitrationTokens = 0
@@ -263,7 +266,8 @@ export async function runBatchArbitration(
       projectId,
       sessionId,
       conflict,
-      projectStateContext
+      projectStateContext,
+      userId
     )
     totalArbitrationTokens += result.tokensUsed
     arbitrations.push({

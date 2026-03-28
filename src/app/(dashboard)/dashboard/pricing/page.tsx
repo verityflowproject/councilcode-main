@@ -16,6 +16,7 @@ const PLAN_DETAILS = [
       'ProjectState memory',
       'Full review log',
       'Hallucination firewall',
+      'BYOK supported — use your own keys',
     ],
     cta: 'Current plan',
     highlight: false,
@@ -32,6 +33,7 @@ const PLAN_DETAILS = [
       'Priority model routing',
       'Extended session history',
       'Email support',
+      'BYOK supported',
     ],
     cta: 'Upgrade to Pro',
     highlight: true,
@@ -48,6 +50,7 @@ const PLAN_DETAILS = [
       'Team project sharing',
       'Usage analytics',
       'Priority support',
+      'BYOK supported',
     ],
     cta: 'Upgrade to Teams',
     highlight: false,
@@ -90,6 +93,36 @@ export default async function PricingPage() {
           and the hallucination firewall. Bring your own API keys — you
           pay providers directly, no markup. Upgrade for more sessions.
         </p>
+      </div>
+
+      {/* BYOK callout */}
+      <div
+        className="rounded-xl border p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style={{ borderColor: 'var(--border)', background: 'rgba(99,102,241,0.04)' }}
+      >
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+          All plans support{' '}
+          <strong style={{ color: 'var(--text-primary)' }}>Bring Your Own Keys (BYOK)</strong>
+          {' '}— connect your provider keys to pay at cost with zero markup. Or use{' '}
+          <strong style={{ color: 'var(--text-primary)' }}>VerityFlow Credits</strong>
+          {' '}for instant access with no setup.
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+          <Link
+            href="/dashboard/settings/api-keys"
+            className="text-xs font-mono px-3 py-2 rounded-lg border transition-colors"
+            style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+          >
+            Add API Keys →
+          </Link>
+          <Link
+            href="/dashboard/credits"
+            className="text-xs font-mono px-3 py-2 rounded-lg transition-colors"
+            style={{ background: 'var(--accent)', color: '#fff' }}
+          >
+            Buy Credits →
+          </Link>
+        </div>
       </div>
 
       {/* Plans grid */}

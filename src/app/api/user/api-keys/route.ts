@@ -2,41 +2,35 @@ import { auth } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db/mongoose'
 import { UserApiKeys } from '@/lib/models/UserApiKeys'
-import { encrypt, decrypt } from '@/lib/encryption'
-import {
-  validateAnthropicKey,
-  validateOpenAiKey,
-  validateMistralKey,
-  validateGoogleAiKey,
-  validatePerplexityKey,
-} from '@/lib/validate-api-keys'
+import { encrypt, decrypt } from '@/lib/utils/encryption'
 
-type KeyType = 'anthropic' | 'openai' | 'mistral' | 'googleAi' | 'perplexity'
+type KeyType =
+  | 'anthropic'
+  | 'openai'
+  | 'mistral'
+  | 'googleAi'
+  | 'perplexity'
+  | 'openrouter'
 
-const KEY_TYPE_TO_FIELD: Record<KeyType, keyof typeof FIELD_MAP> = {
-  anthropic: 'anthropicKey',
-  openai: 'openaiKey',
-  mistral: 'mistralKey',
-  googleAi: 'googleAiKey',
+const KEY_TYPE_TO_FIELD: Record<KeyType, string> = {
+  anthropic:  'anthropicKey',
+  openai:     'openaiKey',
+  mistral:    'mistralKey',
+  googleAi:   'googleAiKey',
   perplexity: 'perplexityKey',
+  openrouter: 'openrouterKey',
 }
 
-// Used purely for the type reference above — matches IUserApiKeys fields
-const FIELD_MAP = {
-  anthropicKey: true,
-  openaiKey: true,
-  mistralKey: true,
-  googleAiKey: true,
-  perplexityKey: true,
-} as const
+const ALLOWED_KEY_TYPES = new Set<string>(Object.keys(KEY_TYPE_TO_FIELD))
 
-const VALIDATORS: Record<KeyType, (key: string) => Promise<boolean>> = {
-  anthropic: validateAnthropicKey,
-  openai: validateOpenAiKey,
-  mistral: validateMistralKey,
-  googleAi: validateGoogleAiKey,
-  perplexity: validatePerplexityKey,
-}
+const ALL_FIELDS = [
+  'anthropicKey',
+  'openaiKey',
+  'mistralKey',
+  'googleAiKey',
+  'perplexityKey',
+  'openrouterKey',
+] as const
 
 function maskKey(decrypted: string): string {
   const last4 = decrypted.slice(-4)
@@ -44,7 +38,7 @@ function maskKey(decrypted: string): string {
 }
 
 function isValidKeyType(value: unknown): value is KeyType {
-  return typeof value === 'string' && value in KEY_TYPE_TO_FIELD
+  return typeof value === 'string' && ALLOWED_KEY_TYPES.has(value)
 }
 
 // ── GET — return masked key values for the current user ──────────────────────
@@ -59,19 +53,20 @@ export async function GET() {
     await connectDB()
     const doc = await UserApiKeys.findOne({ userId: session.user.id }).lean()
 
-    if (!doc) {
-      return NextResponse.json({}, { status: 200 })
-    }
-
-    const fields = ['anthropicKey', 'openaiKey', 'mistralKey', 'googleAiKey', 'perplexityKey'] as const
     const result: Record<string, string | null> = {}
+    let hasAnyKey = false
 
-    for (const field of fields) {
-      const raw = doc[field]
-      result[field] = raw ? maskKey(decrypt(raw)) : null
+    for (const field of ALL_FIELDS) {
+      const raw = doc?.[field] as string | undefined
+      if (raw) {
+        result[field] = maskKey(decrypt(raw))
+        hasAnyKey = true
+      } else {
+        result[field] = null
+      }
     }
 
-    return NextResponse.json(result, { status: 200 })
+    return NextResponse.json({ ...result, hasAnyKey }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal error'
     console.error('[/api/user/api-keys GET] error:', message)
@@ -79,7 +74,7 @@ export async function GET() {
   }
 }
 
-// ── POST — validate a key live, encrypt, and upsert ──────────────────────────
+// ── POST — validate format, encrypt, and upsert ───────────────────────────────
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -98,19 +93,17 @@ export async function POST(req: NextRequest) {
 
   if (!isValidKeyType(keyType)) {
     return NextResponse.json(
-      { error: 'keyType must be one of: anthropic, openai, mistral, googleAi, perplexity' },
+      {
+        error:
+          'keyType must be one of: anthropic, openai, mistral, googleAi, perplexity, openrouter',
+      },
       { status: 400 }
     )
   }
 
-  if (typeof value !== 'string' || value.trim() === '') {
-    return NextResponse.json({ error: 'value must be a non-empty string' }, { status: 400 })
-  }
-
-  const isValid = await VALIDATORS[keyType](value.trim())
-  if (!isValid) {
+  if (typeof value !== 'string' || value.trim().length < 10) {
     return NextResponse.json(
-      { error: 'Invalid or inactive API key' },
+      { error: 'Invalid key format — key must be at least 10 characters' },
       { status: 400 }
     )
   }
@@ -124,7 +117,8 @@ export async function POST(req: NextRequest) {
       { upsert: true, new: true }
     )
 
-    return NextResponse.json({ success: true }, { status: 200 })
+    const masked = maskKey(value.trim())
+    return NextResponse.json({ success: true, masked }, { status: 200 })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Internal error'
     console.error('[/api/user/api-keys POST] error:', message)
@@ -151,7 +145,10 @@ export async function DELETE(req: NextRequest) {
 
   if (!isValidKeyType(keyType)) {
     return NextResponse.json(
-      { error: 'keyType must be one of: anthropic, openai, mistral, googleAi, perplexity' },
+      {
+        error:
+          'keyType must be one of: anthropic, openai, mistral, googleAi, perplexity, openrouter',
+      },
       { status: 400 }
     )
   }
@@ -161,7 +158,7 @@ export async function DELETE(req: NextRequest) {
     const field = KEY_TYPE_TO_FIELD[keyType]
     await UserApiKeys.findOneAndUpdate(
       { userId: session.user.id },
-      { $set: { [field]: null } }
+      { $unset: { [field]: '' } }
     )
 
     return NextResponse.json({ success: true }, { status: 200 })

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe, getPlanById, getModelCallsLimit } from '@/lib/stripe'
 import { connectDB } from '@/lib/db/mongoose'
 import { User } from '@/lib/models/User'
+import { addCredits } from '@/lib/utils/credits'
+import { CreditTransaction } from '@/lib/models/UserCredits'
 import type Stripe from 'stripe'
 
 // Disable body parsing — Stripe needs the raw body for signature verification
@@ -36,21 +38,53 @@ export async function POST(req: NextRequest) {
     await connectDB()
 
     switch (event.type) {
-      // Payment succeeded — upgrade user plan
+      // Payment succeeded — handle both plan upgrades and credit purchases
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        const userId = session.metadata?.userId
+        const packageId = session.metadata?.packageId
         const planId = session.metadata?.planId
-        if (!userId || !planId) break
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const limit = getModelCallsLimit(planId as any)
-        await User.findByIdAndUpdate(userId, {
-          plan: planId,
-          modelCallsLimit: limit,
-          stripeCustomerId: session.customer as string,
-          stripeSubscriptionId: session.subscription as string,
-        })
-        console.log(`[Webhook] User ${userId} upgraded to ${planId}`)
+
+        if (packageId) {
+          // ── Credit pack purchase ──────────────────────────────────────────
+          const credits = parseInt(session.metadata?.credits ?? '0')
+          const userId = session.metadata?.userId
+          if (!userId || !credits) break
+
+          // Idempotency — skip if this payment has already been processed
+          const paymentIntentId = session.payment_intent as string | null
+          if (paymentIntentId) {
+            const existing = await CreditTransaction.findOne({
+              stripePaymentId: paymentIntentId,
+            }).lean()
+            if (existing) {
+              console.log(
+                `[Webhook] Skipping duplicate credit purchase for payment ${paymentIntentId}`
+              )
+              break
+            }
+          }
+
+          await addCredits(userId, {
+            amount: credits,
+            type: 'purchase',
+            description: `Credit purchase — ${packageId} pack`,
+            stripePaymentId: paymentIntentId ?? undefined,
+          })
+          console.log(`[Webhook] Added ${credits} credits to user ${userId}`)
+        } else if (planId) {
+          // ── Subscription / plan upgrade ───────────────────────────────────
+          const userId = session.metadata?.userId
+          if (!userId || !planId) break
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const limit = getModelCallsLimit(planId as any)
+          await User.findByIdAndUpdate(userId, {
+            plan: planId,
+            modelCallsLimit: limit,
+            stripeCustomerId: session.customer as string,
+            stripeSubscriptionId: session.subscription as string,
+          })
+          console.log(`[Webhook] User ${userId} upgraded to ${planId}`)
+        }
         break
       }
 

@@ -232,6 +232,30 @@ export default function BuiltDifferently() {
           </p>
         </div>
 
+        {/* Compare link */}
+        <div style={{ textAlign: 'center', marginTop: '32px' }}>
+          <a
+            href="/compare"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '13px',
+              color: 'var(--accent-blue)',
+              textDecoration: 'none',
+              borderBottom: '1px solid rgba(67,97,238,0.3)',
+              paddingBottom: '2px',
+              transition: 'border-color 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              ;(e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(67,97,238,0.7)'
+            }}
+            onMouseLeave={(e) => {
+              ;(e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(67,97,238,0.3)'
+            }}
+          >
+            See the full comparison →
+          </a>
+        </div>
+
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-# CouncilCode — Environment Setup Guide
+# VerityFlow — Environment Setup Guide
 
 ## Prerequisites
 - Node.js 18+
@@ -121,11 +121,11 @@ PERPLEXITY_API_KEY=pplx-...
 1. Go to https://dashboard.stripe.com/products
 2. Create two products:
 
-**CouncilCode Pro**
+**VerityFlow Pro**
 - Price: $29/month recurring
 - Copy the Price ID (starts with `price_`)
 
-**CouncilCode Teams**
+**VerityFlow Teams**
 - Price: $99/month recurring
 - Copy the Price ID
 

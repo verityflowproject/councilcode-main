@@ -6,6 +6,8 @@ import { Project } from '@/lib/models/Project'
 import { User } from '@/lib/models/User'
 import { logUsage } from '@/lib/utils/usageLogger'
 import { serializeError, UsageLimitError, MissingApiKeyError } from '@/lib/utils/errors'
+import { isUsingPlatformKeys } from '@/lib/utils/get-model-key'
+import { getUserBalance, estimateSessionCost } from '@/lib/utils/credits'
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -42,6 +44,27 @@ export async function POST(req: NextRequest) {
     }
     if (user.modelCallsUsed >= user.modelCallsLimit) {
       throw new UsageLimitError()
+    }
+
+    // Pre-flight credit check — only needed when no BYOK keys are configured
+    const usingPlatform = await isUsingPlatformKeys(session.user.id)
+    if (usingPlatform) {
+      const [balance, estimate] = await Promise.all([
+        getUserBalance(session.user.id),
+        Promise.resolve(estimateSessionCost(5)),
+      ])
+      if (balance < estimate) {
+        return NextResponse.json(
+          {
+            error: 'insufficient_credits',
+            balance,
+            required: estimate,
+            message: 'Not enough credits to run a Council session. Top up at /dashboard/credits.',
+            topUpUrl: '/dashboard/credits',
+          },
+          { status: 402 }
+        )
+      }
     }
 
     // Run orchestrator
@@ -85,6 +108,8 @@ export async function POST(req: NextRequest) {
         callsUsed: result.responses.length,
         reviewTokensUsed: result.reviewTokensUsed,
         arbitrationTokensUsed: result.arbitrationTokensUsed,
+        totalCreditCost: result.totalCreditCost,
+        creditBreakdown: result.creditBreakdown,
       },
       { status: 200 }
     )

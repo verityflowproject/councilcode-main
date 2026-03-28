@@ -19,6 +19,7 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
   const [isRunning, setIsRunning] = useState(false)
   const [sessionId] = useState(generateSessionId)
   const [finalOutput, setFinalOutput] = useState<string | null>(null)
+  const [insufficientCredits, setInsufficientCredits] = useState(false)
   const feedEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -38,6 +39,7 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
     setIsRunning(true)
     setFinalOutput(null)
     setEvents([])
+    setInsufficientCredits(false)
 
     addEvent({ type: 'system', message: 'Council session started' })
 
@@ -75,6 +77,15 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
       const data = await res.json()
 
       if (!res.ok) {
+        if (res.status === 402) {
+          addEvent({
+            type: 'error',
+            model: 'claude',
+            message: data.message ?? 'Not enough credits to run a Council session.',
+          })
+          setInsufficientCredits(true)
+          return
+        }
         addEvent({
           type: 'error',
           model: 'claude',
@@ -154,6 +165,25 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
         setFinalOutput(bestOutput)
         addEvent({ type: 'system', message: 'Session complete — output ready' })
       }
+
+      // Credit usage summary
+      if ((data.totalCreditCost ?? 0) > 0) {
+        addEvent({
+          type: 'system',
+          message: `Session used ${data.totalCreditCost} credits — add your own keys at Settings to avoid charges`,
+        })
+      }
+      const hasByokCalls = Array.isArray(data.creditBreakdown) &&
+        data.creditBreakdown.some(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (e: any) => e.keySource === 'byok-individual' || e.keySource === 'byok-openrouter'
+        )
+      if (hasByokCalls) {
+        addEvent({
+          type: 'system',
+          message: 'Your keys used — no credits charged for those calls',
+        })
+      }
     } catch (err: unknown) {
       clearInterval(thinkingInterval)
       const message = err instanceof Error ? err.message : 'Unknown error'
@@ -176,6 +206,31 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Insufficient credits banner */}
+      {insufficientCredits && (
+        <div
+          className="flex items-center justify-between rounded-xl border px-4 py-3"
+          style={{
+            borderColor: 'rgba(239,68,68,0.3)',
+            background: 'rgba(239,68,68,0.06)',
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <span style={{ color: '#ef4444' }}>⚡</span>
+            <span className="text-sm" style={{ color: '#ef4444' }}>
+              Not enough credits to run a Council session.
+            </span>
+          </div>
+          <a
+            href="/dashboard/credits"
+            className="text-sm font-semibold transition-opacity hover:opacity-80"
+            style={{ color: '#ef4444' }}
+          >
+            Top up credits →
+          </a>
+        </div>
+      )}
+
       {/* Prompt input */}
       <div
         className="rounded-xl border overflow-hidden"

@@ -24,25 +24,51 @@ import { batchReview } from './review/pipeline'
 import { runHallucinationFirewall } from './review/hallucination'
 import { detectConflict, runBatchArbitration } from './review/arbitration'
 import type { ConflictCandidate, BatchArbitrationResult } from './review/arbitration'
-import { getUserApiKeys } from '@/lib/get-user-keys'
-import type { UserKeySet } from '@/lib/get-user-keys'
+import { deductCredits } from '@/lib/utils/credits'
+
+// Default ModelResponse fields for cases where adapter never ran
+function defaultResponse(
+  model: ModelRole,
+  issues: string[],
+  tokensUsed = 0
+): ModelResponse {
+  return {
+    model,
+    output: '',
+    confidence: 0,
+    flaggedIssues: issues,
+    tokensUsed,
+    modelString: '',
+    inputTokens: 0,
+    outputTokens: 0,
+    creditCost: 0,
+    keySource: 'platform',
+  }
+}
 
 // --- Adapter dispatch ---
-async function runAdapter(task: OrchestratorTask, userKeys: UserKeySet): Promise<ModelResponse> {
+async function runAdapter(task: OrchestratorTask): Promise<ModelResponse> {
   switch (task.assignedModel) {
     case 'claude':
-      return runClaude(task, userKeys.anthropicKey ?? undefined)
+      return runClaude(task)
     case 'gpt4o':
-      return runGpt4o(task, userKeys.openaiKey ?? undefined)
+      return runGpt4o(task)
     case 'codestral':
-      return runCodestral(task, userKeys.mistralKey ?? undefined)
+      return runCodestral(task)
     case 'gemini':
-      return runGemini(task, userKeys.googleAiKey ?? undefined)
+      return runGemini(task)
     case 'perplexity':
-      return runPerplexity(task, userKeys.perplexityKey ?? undefined)
+      return runPerplexity(task)
     default:
       throw new Error(`Unknown model: ${task.assignedModel}`)
   }
+}
+
+export interface CreditBreakdownEntry {
+  model: ModelRole
+  modelString: string
+  creditCost: number
+  keySource: 'byok-individual' | 'byok-openrouter' | 'platform'
 }
 
 // --- Main orchestrator ---
@@ -72,15 +98,14 @@ export async function runOrchestrator(
   requiresArbitration: boolean
   reviewTokensUsed: number
   arbitrationTokensUsed: number
+  totalCreditCost: number
+  creditBreakdown: CreditBreakdownEntry[]
 }> {
   // 1. Load current ProjectState
   const state = await getProjectState(projectId)
   if (!state) {
     throw new Error(`[Orchestrator] No ProjectState found for project ${projectId}`)
   }
-
-  // 1b. Load user API keys (user keys take priority over platform env keys)
-  const userKeys = await getUserApiKeys(userId)
 
   // 2. Update currentTask in state
   const _taskType = classifyTask(userPrompt)
@@ -92,18 +117,17 @@ export async function runOrchestrator(
     },
   })
 
-  // 3. Build task queue
-  const tasks = buildTaskQueue(projectId, userPrompt, state)
+  // 3. Build task queue — adapters self-resolve keys via resolveApiKey(task.userId)
+  const tasks = buildTaskQueue(projectId, userPrompt, state, userId)
   const responses: ModelResponse[] = []
   let requiresArbitration = false
 
   // 4. Execute tasks sequentially
-  // Research task always runs first and its findings feed into subsequent tasks
   let researchFindings: string | null = null
 
   for (const task of tasks) {
     try {
-      // Run hallucination firewall for implementation tasks
+      // Run hallucination firewall for implementation and architecture tasks
       let enrichedTask = task
       if (
         task.taskType === 'implementation' ||
@@ -111,21 +135,19 @@ export async function runOrchestrator(
       ) {
         const firewallResult = await runHallucinationFirewall(task, state)
         if (firewallResult.blocked) {
-          // Block this task — push an error response and skip execution
-          responses.push({
-            model: task.assignedModel,
-            output: '',
-            confidence: 0,
-            flaggedIssues: [firewallResult.blockReason ?? 'Blocked by hallucination firewall'],
-            tokensUsed: firewallResult.tokensUsed,
-          })
+          responses.push(
+            defaultResponse(
+              task.assignedModel,
+              [firewallResult.blockReason ?? 'Blocked by hallucination firewall'],
+              firewallResult.tokensUsed
+            )
+          )
           continue
         }
-        // Use the enriched prompt with verified dependency info
         enrichedTask = { ...task, prompt: firewallResult.enrichedPrompt }
       }
 
-      // Also inject prior research findings if available
+      // Inject prior research findings if available
       if (researchFindings && task.taskType !== 'research') {
         enrichedTask = {
           ...enrichedTask,
@@ -135,15 +157,13 @@ export async function runOrchestrator(
         }
       }
 
-      const response = await runAdapter(enrichedTask, userKeys)
+      const response = await runAdapter(enrichedTask)
       responses.push(response)
 
-      // Store research findings for downstream tasks
       if (task.taskType === 'research') {
         researchFindings = response.output
       }
 
-      // Check if reviewer flagged issues requiring arbitration
       if (
         task.taskType === 'review' &&
         response.flaggedIssues.length > 0 &&
@@ -152,7 +172,6 @@ export async function runOrchestrator(
         requiresArbitration = true
       }
 
-      // Log review entries to ProjectState
       if (task.taskType === 'review' || task.taskType === 'arbitration') {
         const entry: ReviewEntry = {
           modelSource: task.assignedModel,
@@ -165,23 +184,17 @@ export async function runOrchestrator(
       }
     } catch (err) {
       console.error(`[Orchestrator] Task failed for ${task.assignedModel}:`, err)
-      responses.push({
-        model: task.assignedModel,
-        output: '',
-        confidence: 0,
-        flaggedIssues: [`Task execution failed: ${String(err)}`],
-        tokensUsed: 0,
-      })
+      responses.push(
+        defaultResponse(task.assignedModel, [`Task execution failed: ${String(err)}`])
+      )
     }
   }
 
-  // 6. Run batch review pipeline on all non-research, non-arbitration responses
+  // 5. Run batch review pipeline
   const reviewableTasks = tasks.filter(
     (t) => t.taskType !== 'research' && t.taskType !== 'arbitration'
   )
-  const reviewableResponses = responses.filter(
-    (r) => r.model !== 'perplexity'
-  )
+  const reviewableResponses = responses.filter((r) => r.model !== 'perplexity')
   let reviewResult = {
     anyRequiresArbitration: false,
     totalReviewTokens: 0,
@@ -202,19 +215,18 @@ export async function runOrchestrator(
     )
   }
 
-  // 7. Run arbitration on any genuine conflicts
+  // 6. Run arbitration on genuine conflicts
   let arbitrationResults: BatchArbitrationResult | null = null
   if (reviewResult.anyRequiresArbitration) {
     requiresArbitration = true
-    // Build conflict candidates
     const conflicts: ConflictCandidate[] = []
     for (let i = 0; i < reviewableResponses.length; i++) {
       const primary = reviewableResponses[i]
       const task = reviewableTasks[i] ?? reviewableTasks[reviewableTasks.length - 1]
-      // Find the corresponding review response
       const reviewResponse = responses.find(
-        (r) => r.model !== primary.model &&
-        (r.model === 'claude' || r.model === 'gpt4o')
+        (r) =>
+          r.model !== primary.model &&
+          (r.model === 'claude' || r.model === 'gpt4o')
       )
       if (
         reviewResponse &&
@@ -238,13 +250,11 @@ export async function runOrchestrator(
         projectId,
         sessionId,
         conflicts,
-        arbitrationContext
+        arbitrationContext,
+        userId
       )
-      // Merge arbitrated outputs back into finalOutputs
       for (const arb of arbitrationResults.arbitrations) {
-        const idx = reviewResult.finalOutputs.findIndex(
-          (o) => o.model === arb.model
-        )
+        const idx = reviewResult.finalOutputs.findIndex((o) => o.model === arb.model)
         if (idx !== -1) {
           reviewResult.finalOutputs[idx] = {
             ...reviewResult.finalOutputs[idx],
@@ -256,7 +266,36 @@ export async function runOrchestrator(
     }
   }
 
-  // 8. Return final state
+  // 7. Deduct credits for any platform-key calls (best-effort, never blocks output)
+  const creditBreakdown: CreditBreakdownEntry[] = responses
+    .filter((r) => r.modelString) // skip defaulted/blocked responses
+    .map((r) => ({
+      model: r.model,
+      modelString: r.modelString,
+      creditCost: r.creditCost ?? 0,
+      keySource: r.keySource ?? 'platform',
+    }))
+
+  const totalCreditCost = creditBreakdown.reduce((sum, e) => sum + e.creditCost, 0)
+
+  if (totalCreditCost > 0) {
+    for (const r of responses) {
+      if ((r.creditCost ?? 0) > 0) {
+        await deductCredits(userId, {
+          amount: r.creditCost,
+          description: `Council session — ${r.model} (${r.modelString})`,
+          sessionId,
+          modelUsed: r.modelString,
+          tokensUsed: r.tokensUsed,
+          creditCostPerCall: r.creditCost,
+        }).catch((err) =>
+          console.error('[Orchestrator] Credit deduction failed:', err)
+        )
+      }
+    }
+  }
+
+  // 8. Return
   const updatedState = await getProjectState(projectId)
   return {
     responses,
@@ -266,5 +305,7 @@ export async function runOrchestrator(
     requiresArbitration,
     reviewTokensUsed: reviewResult.totalReviewTokens,
     arbitrationTokensUsed: arbitrationResults?.totalArbitrationTokens ?? 0,
+    totalCreditCost,
+    creditBreakdown,
   }
 }

@@ -64,6 +64,7 @@ export interface OrchestratorTask {
   prompt: string
   assignedModel: ModelRole
   context: Partial<ProjectStateDoc>
+  userId: string
 }
 
 export interface ModelResponse {
@@ -71,7 +72,12 @@ export interface ModelResponse {
   output: string
   confidence: number
   flaggedIssues: string[]
-  tokensUsed: number
+  tokensUsed: number        // inputTokens + outputTokens (backward compat)
+  modelString: string
+  inputTokens: number
+  outputTokens: number
+  creditCost: number
+  keySource: 'byok-individual' | 'byok-openrouter' | 'platform'
 }
 
 export interface CouncilSession {

@@ -2,12 +2,9 @@ import Anthropic from '@anthropic-ai/sdk'
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
 import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
-
-const defaultClient = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY ?? 'missing',
-})
-
-const MODEL = 'claude-opus-4-6'
+import { resolveApiKey } from '@/lib/utils/get-model-key'
+import { calculateCreditCost } from '@/lib/utils/credit-costs'
+import { classifyComplexity, selectModelString } from '../smart-routing'
 
 function buildSystemPrompt(taskType: string): string {
   const base = `You are Claude, the Architect on an AI engineering team called VerityFlow. Your role is system design, data modeling, architectural decisions, and conflict arbitration. You reason carefully before acting. You never guess — if you are uncertain about a library, API, or pattern, you say so explicitly and flag it as an open question.`
@@ -22,13 +19,19 @@ function buildSystemPrompt(taskType: string): string {
   return `${base}\n\n${taskInstructions[taskType] ?? 'Complete the task to the best of your ability following project conventions.'}`
 }
 
-export async function runClaude(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
-  const resolvedKey = apiKey ?? process.env.ANTHROPIC_API_KEY
-  if (!resolvedKey) throw new MissingApiKeyError('anthropic')
+export async function runClaude(task: OrchestratorTask): Promise<ModelResponse> {
+  const complexity = classifyComplexity(task.prompt)
+  const modelString = selectModelString('claude', complexity)
 
-  const c = apiKey ? new Anthropic({ apiKey }) : defaultClient
+  let resolved
+  try {
+    resolved = await resolveApiKey(task.userId, 'anthropic')
+  } catch (err) {
+    throw new MissingApiKeyError('anthropic')
+  }
 
-  const _start = Date.now()
+  const c = new Anthropic({ apiKey: resolved.apiKey })
+
   try {
     const contextBlock = Object.keys(task.context).length > 0
       ? `\n\n--- Project context ---\n${JSON.stringify(task.context, null, 2)}`
@@ -36,7 +39,7 @@ export async function runClaude(task: OrchestratorTask, apiKey?: string): Promis
 
     const message = await withRetry(
       () => c.messages.create({
-        model: MODEL,
+        model: modelString,
         max_tokens: 4096,
         system: buildSystemPrompt(task.taskType),
         messages: [
@@ -54,14 +57,23 @@ export async function runClaude(task: OrchestratorTask, apiKey?: string): Promis
       .map((block) => (block as { type: 'text'; text: string }).text)
       .join('\n')
 
-    const tokensUsed = message.usage.input_tokens + message.usage.output_tokens
+    const inputTok = message.usage.input_tokens
+    const outputTok = message.usage.output_tokens
+    const creditCost = resolved.shouldDeductCredits
+      ? calculateCreditCost(modelString, inputTok, outputTok)
+      : 0
 
     return {
       model: 'claude',
       output,
       confidence: 0.95,
       flaggedIssues: [],
-      tokensUsed,
+      tokensUsed: inputTok + outputTok,
+      modelString,
+      inputTokens: inputTok,
+      outputTokens: outputTok,
+      creditCost,
+      keySource: resolved.source,
     }
   } catch (err: unknown) {
     if (err instanceof MissingApiKeyError) throw err

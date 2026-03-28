@@ -9,6 +9,7 @@ export interface IUser extends Document {
   stripeSubscriptionId?: string
   modelCallsUsed: number
   modelCallsLimit: number
+  creditBalance: number
   createdAt: Date
   updatedAt: Date
 }
@@ -48,6 +49,10 @@ const UserSchema = new Schema<IUser>(
     modelCallsLimit: {
       type: Number,
       default: 50, // free tier default
+    },
+    creditBalance: {
+      type: Number,
+      default: 0,
     },
   },
   {

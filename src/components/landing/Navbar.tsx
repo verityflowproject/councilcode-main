@@ -69,6 +69,7 @@ export default function Navbar() {
         {[
           { label: 'How it works', href: '#how-it-works' },
           { label: 'The council', href: '#council' },
+          { label: 'Compare', href: '/compare' },
           { label: 'FAQ', href: '/faq' },
         ].map((link) => (
           <a

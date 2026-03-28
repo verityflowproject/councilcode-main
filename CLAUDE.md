@@ -1,4 +1,4 @@
-# CouncilCode — Project Memory
+# VerityFlow — Project Memory
 
 ## What this is
 A multi-model AI vibe coding SaaS. Five AI models collaborate as a structured engineering team to build user projects. Models share a living ProjectState document, critique each other via a cross-model review layer, and resolve conflicts via a structured arbitration protocol.
@@ -106,4 +106,4 @@ The ProjectState is the shared memory across all model calls.
 - Add session history browser
 - Add team collaboration (shared projects)
 - Add webhook notifications (Slack, email on session complete)
-- Consider CouncilCode API for developers to run council sessions programmatically
+- Consider VerityFlow API for developers to run council sessions programmatically

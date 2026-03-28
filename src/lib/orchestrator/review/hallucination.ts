@@ -142,6 +142,7 @@ Return ONLY valid JSON:
       dependencies: projectState.dependencies,
       currentTask: task.context.currentTask,
     },
+    userId: task.userId,
   }
 
   let researchResponse

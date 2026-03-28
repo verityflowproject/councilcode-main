@@ -3,12 +3,13 @@
 import { useState } from 'react'
 
 interface ApiKeyCardProps {
-  keyType: 'anthropic' | 'openai' | 'mistral' | 'googleAi' | 'perplexity'
+  keyType: 'anthropic' | 'openai' | 'mistral' | 'googleAi' | 'perplexity' | 'openrouter'
   modelName: string
   roleBadge: string
   providerName: string
   providerUrl: string
   initialMasked: string | null
+  accentColor?: string
 }
 
 export default function ApiKeyCard({
@@ -18,6 +19,7 @@ export default function ApiKeyCard({
   providerName,
   providerUrl,
   initialMasked,
+  accentColor,
 }: ApiKeyCardProps) {
   const [inputValue, setInputValue] = useState('')
   const [showKey, setShowKey] = useState(false)
@@ -48,11 +50,12 @@ export default function ApiKeyCard({
         if (getRes.ok) {
           const keys = await getRes.json()
           const fieldMap: Record<string, string> = {
-            anthropic: 'anthropicKey',
-            openai: 'openaiKey',
-            mistral: 'mistralKey',
-            googleAi: 'googleAiKey',
+            anthropic:  'anthropicKey',
+            openai:     'openaiKey',
+            mistral:    'mistralKey',
+            googleAi:   'googleAiKey',
             perplexity: 'perplexityKey',
+            openrouter: 'openrouterKey',
           }
           setMasked(keys[fieldMap[keyType]] ?? null)
         }
@@ -105,9 +108,13 @@ export default function ApiKeyCard({
           <span
             className="text-xs font-mono px-2 py-0.5 rounded-full border"
             style={{
-              color: 'var(--accent)',
-              borderColor: 'rgba(99,102,241,0.3)',
-              background: 'rgba(99,102,241,0.08)',
+              color: accentColor ?? 'var(--accent)',
+              borderColor: accentColor
+                ? `${accentColor}40`
+                : 'rgba(99,102,241,0.3)',
+              background: accentColor
+                ? `${accentColor}14`
+                : 'rgba(99,102,241,0.08)',
             }}
           >
             {roleBadge}

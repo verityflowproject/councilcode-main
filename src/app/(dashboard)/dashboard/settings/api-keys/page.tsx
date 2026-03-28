@@ -9,6 +9,8 @@ interface MaskedKeys {
   mistralKey: string | null
   googleAiKey: string | null
   perplexityKey: string | null
+  openrouterKey: string | null
+  hasAnyKey: boolean
 }
 
 const MODEL_CONFIGS = [
@@ -19,6 +21,7 @@ const MODEL_CONFIGS = [
     providerName: 'Anthropic Console',
     providerUrl: 'https://console.anthropic.com/settings/keys',
     field: 'anthropicKey' as keyof MaskedKeys,
+    accentColor: 'var(--claude)',
   },
   {
     keyType: 'openai' as const,
@@ -27,6 +30,7 @@ const MODEL_CONFIGS = [
     providerName: 'OpenAI Platform',
     providerUrl: 'https://platform.openai.com/api-keys',
     field: 'openaiKey' as keyof MaskedKeys,
+    accentColor: 'var(--gpt4o)',
   },
   {
     keyType: 'mistral' as const,
@@ -35,6 +39,7 @@ const MODEL_CONFIGS = [
     providerName: 'Mistral Console',
     providerUrl: 'https://console.mistral.ai/api-keys',
     field: 'mistralKey' as keyof MaskedKeys,
+    accentColor: 'var(--codestral)',
   },
   {
     keyType: 'googleAi' as const,
@@ -43,6 +48,7 @@ const MODEL_CONFIGS = [
     providerName: 'Google AI Studio',
     providerUrl: 'https://aistudio.google.com/app/apikey',
     field: 'googleAiKey' as keyof MaskedKeys,
+    accentColor: 'var(--gemini)',
   },
   {
     keyType: 'perplexity' as const,
@@ -51,8 +57,18 @@ const MODEL_CONFIGS = [
     providerName: 'Perplexity API',
     providerUrl: 'https://www.perplexity.ai/settings/api',
     field: 'perplexityKey' as keyof MaskedKeys,
+    accentColor: 'var(--perplexity)',
   },
 ]
+
+const ALL_KEY_TYPES = [
+  'anthropic',
+  'openai',
+  'mistral',
+  'googleAi',
+  'perplexity',
+  'openrouter',
+] as const
 
 export default function ApiKeysSettingsPage() {
   const [keys, setKeys] = useState<MaskedKeys | null>(null)
@@ -60,36 +76,37 @@ export default function ApiKeysSettingsPage() {
   const [explainerOpen, setExplainerOpen] = useState(false)
   const [removingAll, setRemovingAll] = useState(false)
 
-  useEffect(() => {
+  const fetchKeys = () => {
     fetch('/api/user/api-keys')
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => setKeys(data))
       .catch(() => setKeys(null))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchKeys()
   }, [])
 
   const handleRemoveAll = async () => {
-    if (!window.confirm('Remove all saved API keys? This cannot be undone.')) return
+    if (
+      !window.confirm(
+        'Remove all saved API keys? VerityFlow will fall back to platform keys and deduct credits.'
+      )
+    )
+      return
     setRemovingAll(true)
     try {
-      await Promise.all(
-        MODEL_CONFIGS.map((m) =>
-          fetch('/api/user/api-keys', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ keyType: m.keyType }),
-          })
-        )
-      )
-      setKeys({
-        anthropicKey: null,
-        openaiKey: null,
-        mistralKey: null,
-        googleAiKey: null,
-        perplexityKey: null,
-      })
+      for (const keyType of ALL_KEY_TYPES) {
+        await fetch('/api/user/api-keys', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keyType }),
+        })
+      }
+      fetchKeys()
     } catch {
-      // silently ignore — individual cards still show their state
+      // silently ignore
     } finally {
       setRemovingAll(false)
     }
@@ -119,10 +136,7 @@ export default function ApiKeysSettingsPage() {
             type="button"
             onClick={() => setExplainerOpen((v) => !v)}
             className="w-full flex items-center justify-between px-4 py-3 text-left transition-colors"
-            style={{
-              background: 'var(--surface)',
-              color: 'var(--text-secondary)',
-            }}
+            style={{ background: 'var(--surface)', color: 'var(--text-secondary)' }}
           >
             <span className="text-xs font-mono" style={{ color: 'var(--accent)' }}>
               Why BYOK?
@@ -147,19 +161,18 @@ export default function ApiKeysSettingsPage() {
                 color: 'var(--text-secondary)',
               }}
             >
-              Other AI tools charge you their margin on top of API costs. With BYOK, you
-              pay Anthropic, OpenAI, and others directly at cost. VerityFlow charges only
-              for the orchestration layer — the Council architecture, routing logic, and
-              cross-model review system.
+              Other AI tools charge you their margin on top of API costs. With BYOK, you pay
+              Anthropic, OpenAI, and others directly at cost. VerityFlow charges only for the
+              orchestration layer — the Council architecture, routing logic, and cross-model
+              review system.
             </div>
           )}
         </div>
       </div>
 
-      {/* Key cards */}
       {loading ? (
         <div className="space-y-3">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3].map((i) => (
             <div
               key={i}
               className="rounded-xl border p-5 animate-pulse"
@@ -171,18 +184,94 @@ export default function ApiKeysSettingsPage() {
           ))}
         </div>
       ) : (
-        <div className="space-y-3">
-          {MODEL_CONFIGS.map((config) => (
-            <ApiKeyCard
-              key={config.keyType}
-              keyType={config.keyType}
-              modelName={config.modelName}
-              roleBadge={config.roleBadge}
-              providerName={config.providerName}
-              providerUrl={config.providerUrl}
-              initialMasked={keys?.[config.field] ?? null}
-            />
-          ))}
+        <div className="space-y-6">
+          {/* ── Recommended: OpenRouter ──────────────────────────────── */}
+          <div>
+            <div
+              className="rounded-xl border-2 p-5 space-y-3"
+              style={{
+                borderColor: 'rgba(99,102,241,0.35)',
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.05) 0%, var(--surface) 100%)',
+              }}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className="text-sm font-bold"
+                      style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
+                    >
+                      Recommended: One key for everything
+                    </span>
+                    <span
+                      className="text-xs font-mono px-2 py-0.5 rounded-full border"
+                      style={{
+                        color: 'var(--accent)',
+                        borderColor: 'rgba(99,102,241,0.4)',
+                        background: 'rgba(99,102,241,0.1)',
+                      }}
+                    >
+                      OpenRouter
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    OpenRouter gives you access to all 5 Council models with a single account and
+                    key. Pay providers directly at cost — no markup.{' '}
+                    <a
+                      href="https://openrouter.ai"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline transition-colors hover:opacity-80"
+                      style={{ color: 'var(--accent)' }}
+                    >
+                      Get your OpenRouter key ↗
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              {/* OpenRouter ApiKeyCard */}
+              <ApiKeyCard
+                keyType="openrouter"
+                modelName="OpenRouter"
+                roleBadge="All 5 models"
+                providerName="openrouter.ai"
+                providerUrl="https://openrouter.ai/keys"
+                initialMasked={keys?.openrouterKey ?? null}
+              />
+
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                A single OpenRouter key powers your entire AI Council. VerityFlow routes each role
+                to the right model automatically.
+              </p>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+            <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>
+              or use individual provider keys
+            </span>
+            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+          </div>
+
+          {/* ── Individual provider cards ──────────────────────────────── */}
+          <div className="space-y-3">
+            {MODEL_CONFIGS.map((config) => (
+              <ApiKeyCard
+                key={config.keyType}
+                keyType={config.keyType}
+                modelName={config.modelName}
+                roleBadge={config.roleBadge}
+                providerName={config.providerName}
+                providerUrl={config.providerUrl}
+                initialMasked={keys?.[config.field] as string | null ?? null}
+                accentColor={config.accentColor}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -199,10 +288,7 @@ export default function ApiKeysSettingsPage() {
           onClick={handleRemoveAll}
           disabled={removingAll}
           className="text-xs px-4 py-2 rounded-lg border transition-all duration-150 hover:border-red-400 hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
-          style={{
-            borderColor: 'var(--border)',
-            color: 'var(--text-muted)',
-          }}
+          style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
         >
           {removingAll ? 'Removing...' : 'Remove all keys'}
         </button>

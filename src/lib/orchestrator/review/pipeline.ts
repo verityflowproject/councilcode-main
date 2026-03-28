@@ -161,6 +161,7 @@ export async function reviewOutput(
     prompt: reviewPrompt,
     assignedModel: route.reviewer,
     context: originalTask.context,
+    userId: originalTask.userId,
   }
 
   let reviewResponse: ModelResponse

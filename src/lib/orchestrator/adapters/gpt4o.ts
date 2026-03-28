@@ -2,12 +2,12 @@ import OpenAI from 'openai'
 import type { OrchestratorTask, ModelResponse } from '@/types'
 import { withRetry, MODEL_RETRY_OPTIONS } from '@/lib/utils/retry'
 import { ModelAdapterError, MissingApiKeyError, RateLimitError, isRateLimitError } from '@/lib/utils/errors'
+import { resolveApiKey, OPENROUTER_BASE_URL } from '@/lib/utils/get-model-key'
+import { calculateCreditCost } from '@/lib/utils/credit-costs'
+import { classifyComplexity, selectModelString } from '../smart-routing'
 
-const defaultClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY ?? 'missing',
-})
-
-const MODEL = 'gpt-5.4'
+// When routing through OpenRouter, gpt-5.4 is not available — fall back to gpt-4o
+const OPENROUTER_GPT_MODEL = 'openai/gpt-4o'
 
 function buildSystemPrompt(taskType: string): string {
   const base = `You are GPT-5.4, the Generalist and primary Reviewer on an AI engineering team called VerityFlow. You are responsible for broad implementation tasks, API integrations, and cross-checking other models' outputs for correctness, hallucinations, and security issues. You are thorough and precise. When reviewing, you always return structured JSON.`
@@ -27,29 +27,64 @@ If approved is false, patch must contain corrected code.`,
   return `${base}\n\n${taskInstructions[taskType] ?? 'Complete the task carefully following project conventions.'}`
 }
 
-export async function runGpt4o(task: OrchestratorTask, apiKey?: string): Promise<ModelResponse> {
-  const resolvedKey = apiKey ?? process.env.OPENAI_API_KEY
-  if (!resolvedKey) throw new MissingApiKeyError('openai')
+export async function runGpt4o(task: OrchestratorTask): Promise<ModelResponse> {
+  const complexity = classifyComplexity(task.prompt)
+  const baseModelString = selectModelString('gpt4o', complexity)
 
-  const c = apiKey ? new OpenAI({ apiKey }) : defaultClient
+  let resolved
+  try {
+    resolved = await resolveApiKey(task.userId, 'openai')
+  } catch (err) {
+    throw new MissingApiKeyError('openai')
+  }
+
+  const isOpenRouter = resolved.source === 'byok-openrouter'
+  const modelString = isOpenRouter ? OPENROUTER_GPT_MODEL : baseModelString
+
+  const c = isOpenRouter
+    ? new OpenAI({ apiKey: resolved.apiKey, baseURL: OPENROUTER_BASE_URL })
+    : new OpenAI({ apiKey: resolved.apiKey })
 
   try {
     const contextBlock = Object.keys(task.context).length > 0
       ? `\n\n--- Project context ---\n${JSON.stringify(task.context, null, 2)}`
       : ''
 
-    const response = await withRetry(
-      () => c.responses.create({
-        model: MODEL,
-        instructions: buildSystemPrompt(task.taskType),
-        input: `${task.prompt}${contextBlock}`,
-        max_output_tokens: 4096,
-      }),
-      MODEL_RETRY_OPTIONS
-    )
+    let output: string
+    let inputTok: number
+    let outputTok: number
 
-    const output = response.output_text ?? ''
-    const tokensUsed = (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0)
+    if (isOpenRouter) {
+      // OpenRouter uses Chat Completions — Responses API is not compatible
+      const response = await withRetry(
+        () => c.chat.completions.create({
+          model: modelString,
+          messages: [
+            { role: 'system', content: buildSystemPrompt(task.taskType) },
+            { role: 'user', content: `${task.prompt}${contextBlock}` },
+          ],
+          max_tokens: 4096,
+        }),
+        MODEL_RETRY_OPTIONS
+      )
+      output = response.choices[0]?.message?.content ?? ''
+      inputTok = response.usage?.prompt_tokens ?? 0
+      outputTok = response.usage?.completion_tokens ?? 0
+    } else {
+      // Direct OpenAI — use Responses API
+      const response = await withRetry(
+        () => c.responses.create({
+          model: modelString,
+          instructions: buildSystemPrompt(task.taskType),
+          input: `${task.prompt}${contextBlock}`,
+          max_output_tokens: 4096,
+        }),
+        MODEL_RETRY_OPTIONS
+      )
+      output = response.output_text ?? ''
+      inputTok = response.usage?.input_tokens ?? 0
+      outputTok = response.usage?.output_tokens ?? 0
+    }
 
     // Parse flagged issues from review output if present
     let flaggedIssues: string[] = []
@@ -64,12 +99,21 @@ export async function runGpt4o(task: OrchestratorTask, apiKey?: string): Promise
       }
     }
 
+    const creditCost = resolved.shouldDeductCredits
+      ? calculateCreditCost(modelString, inputTok, outputTok)
+      : 0
+
     return {
       model: 'gpt4o',
       output,
       confidence: 0.92,
       flaggedIssues,
-      tokensUsed,
+      tokensUsed: inputTok + outputTok,
+      modelString,
+      inputTokens: inputTok,
+      outputTokens: outputTok,
+      creditCost,
+      keySource: resolved.source,
     }
   } catch (err: unknown) {
     if (err instanceof MissingApiKeyError) throw err

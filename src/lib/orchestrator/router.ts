@@ -130,7 +130,8 @@ export function requiresHallucinationCheck(prompt: string): boolean {
 export function buildTaskQueue(
   projectId: string,
   prompt: string,
-  state: ProjectStateDoc
+  state: ProjectStateDoc,
+  userId: string
 ): OrchestratorTask[] {
   const taskType = classifyTask(prompt)
   const assignment = assignModel(taskType)
@@ -147,6 +148,7 @@ export function buildTaskQueue(
       prompt: buildResearchPrompt(prompt, state),
       assignedModel: 'perplexity',
       context: researchSlice,
+      userId,
     })
   }
 
@@ -163,6 +165,7 @@ export function buildTaskQueue(
     prompt,
     assignedModel: assignment.primary,
     context: primarySlice,
+    userId,
   })
 
   // Step 3 — Append reviewer task if assigned
@@ -174,6 +177,7 @@ export function buildTaskQueue(
       prompt: buildReviewPrompt(prompt, assignment.primary),
       assignedModel: assignment.reviewer,
       context: reviewSlice,
+      userId,
     })
   }
 

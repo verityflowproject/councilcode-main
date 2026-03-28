@@ -13,3 +13,6 @@ export type { IUsageLog } from './UsageLog'
 
 export { UserApiKeys } from './UserApiKeys'
 export type { IUserApiKeys } from './UserApiKeys'
+
+export { UserCredits, CreditTransaction } from './UserCredits'
+export type { IUserCredits, ICreditTransaction } from './UserCredits'

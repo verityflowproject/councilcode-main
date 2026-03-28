@@ -544,7 +544,7 @@ export default function ProcessSection() {
             fontFamily: 'var(--font-display)', fontSize: '40px', fontWeight: 700,
             letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: '8px',
           }}>
-            A structured engineering process.
+              A structured engineering process.
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '520px', margin: '0 auto' }}>
             Models don&apos;t take turns — they collaborate, verify, review, and only ship output that passes every gate.
@@ -575,7 +575,7 @@ export default function ProcessSection() {
             <ProjectStateCard />
             <FiveRolesCard />
             <FirewallCard />
-          </div>
+              </div>
 
         </div>
       </div>

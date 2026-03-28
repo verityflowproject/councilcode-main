@@ -1,12 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IUserApiKeys extends Document {
-  userId: string
+  userId: mongoose.Types.ObjectId
+  // Standard 5 provider keys — stored encrypted, null if not set
   anthropicKey?: string
   openaiKey?: string
   mistralKey?: string
   googleAiKey?: string
   perplexityKey?: string
+  // OpenRouter single-key option (covers all 5 models via one account)
+  openrouterKey?: string
+  // Custom role assignments (Pro feature — stored as JSON string, encrypted)
+  roleAssignments?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -14,30 +19,32 @@ export interface IUserApiKeys extends Document {
 const UserApiKeysSchema = new Schema<IUserApiKeys>(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
       unique: true,
       index: true,
     },
     anthropicKey: {
       type: String,
-      default: null,
     },
     openaiKey: {
       type: String,
-      default: null,
     },
     mistralKey: {
       type: String,
-      default: null,
     },
     googleAiKey: {
       type: String,
-      default: null,
     },
     perplexityKey: {
       type: String,
-      default: null,
+    },
+    openrouterKey: {
+      type: String,
+    },
+    roleAssignments: {
+      type: String,
     },
   },
   {
