@@ -1,1 +1,0 @@
-{"sessionId":"45ef32","location":"auth.ts:module-init","message":"auth module loaded – env var presence","data":{"has_AUTH_SECRET":false,"has_NEXTAUTH_SECRET":false,"has_GOOGLE_CLIENT_ID":false,"has_GOOGLE_CLIENT_SECRET":false,"has_MONGODB_URI":false,"has_NEXTAUTH_URL":true,"GOOGLE_CLIENT_ID_len":0},"hypothesisId":"A-B-C-D","timestamp":1774692420503}

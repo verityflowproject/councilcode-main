@@ -1,0 +1,1 @@
+chore: remove stray debug log and add .cursor to gitignore
