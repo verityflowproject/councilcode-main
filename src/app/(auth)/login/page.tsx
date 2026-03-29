@@ -59,15 +59,13 @@ export default function LoginPage() {
         </Link>
         <Link
           href="/"
+          className="auth-back-link"
           style={{
             fontSize: '13px',
             color: 'var(--text-muted)',
             textDecoration: 'none',
             fontFamily: 'var(--font-mono)',
-            transition: 'color 0.15s ease',
           }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)' }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-muted)' }}
         >
           ← Back to home
         </Link>
