@@ -195,7 +195,7 @@ function Cell({ value, isVerityFlow }: { value: CellValue; isVerityFlow?: boolea
               height: '16px',
               borderRadius: '50%',
               background: 'rgba(16,185,129,0.15)',
-              color: '#10b981',
+              color: 'var(--accent-green)',
               fontSize: '10px',
               flexShrink: 0,
               marginTop: '2px',

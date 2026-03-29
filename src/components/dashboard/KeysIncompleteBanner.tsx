@@ -21,8 +21,8 @@ export default function KeysIncompleteBanner({ missingCount }: KeysIncompleteBan
       }}
     >
       <div className="flex items-center gap-3 min-w-0">
-        <span style={{ color: '#f59e0b', flexShrink: 0 }}>⚠</span>
-        <p className="text-sm" style={{ color: '#f59e0b' }}>
+        <span style={{ color: 'var(--accent-amber)', flexShrink: 0 }}>⚠</span>
+        <p className="text-sm" style={{ color: 'var(--accent-amber)' }}>
           Your AI Council is incomplete —{' '}
           {missingCount === 5
             ? 'add your API keys'
@@ -34,7 +34,7 @@ export default function KeysIncompleteBanner({ missingCount }: KeysIncompleteBan
         <Link
           href="/dashboard/settings/api-keys"
           className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-all duration-150 hover:opacity-90 whitespace-nowrap"
-          style={{ background: '#f59e0b', color: '#000' }}
+          style={{ background: 'var(--accent-amber)', color: 'var(--bg-base)' }}
         >
           Add API Keys →
         </Link>
@@ -42,7 +42,7 @@ export default function KeysIncompleteBanner({ missingCount }: KeysIncompleteBan
           type="button"
           onClick={() => setDismissed(true)}
           className="text-xs w-6 h-6 flex items-center justify-center rounded transition-colors hover:opacity-70"
-          style={{ color: '#f59e0b' }}
+          style={{ color: 'var(--accent-amber)' }}
           aria-label="Dismiss"
         >
           ✕

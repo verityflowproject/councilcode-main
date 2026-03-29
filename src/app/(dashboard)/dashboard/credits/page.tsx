@@ -113,7 +113,7 @@ export default function CreditsPage() {
           style={{
             borderColor: 'rgba(16,185,129,0.4)',
             background: 'rgba(16,185,129,0.06)',
-            color: '#10b981',
+            color: 'var(--accent-green)',
           }}
         >
           {successMessage}
@@ -125,7 +125,7 @@ export default function CreditsPage() {
           style={{
             borderColor: 'rgba(245,158,11,0.4)',
             background: 'rgba(245,158,11,0.06)',
-            color: '#f59e0b',
+            color: 'var(--accent-amber)',
           }}
         >
           {cancelMessage}
@@ -187,19 +187,19 @@ export default function CreditsPage() {
                 key={pkg.id}
                 className="rounded-xl border p-5 flex flex-col gap-3 relative"
                 style={{
-                  borderColor: isBestValue ? 'var(--accent)' : 'var(--border)',
+                  borderColor: isBestValue ? 'var(--accent-blue)' : 'var(--border-default)',
                   background: isBestValue
-                    ? 'linear-gradient(135deg, rgba(99,102,241,0.07) 0%, var(--surface) 100%)'
-                    : 'var(--surface)',
+                    ? 'linear-gradient(135deg, rgba(67,97,238,0.07) 0%, var(--bg-surface) 100%)'
+                    : 'var(--bg-surface)',
                 }}
               >
                 {isBestValue && (
                   <span
                     className="absolute top-3 right-3 text-xs font-mono px-2 py-0.5 rounded-full"
                     style={{
-                      background: 'rgba(99,102,241,0.15)',
-                      color: 'var(--accent)',
-                      border: '1px solid rgba(99,102,241,0.3)',
+                      background: 'rgba(67,97,238,0.12)',
+                      color: 'var(--accent-blue)',
+                      border: '1px solid rgba(67,97,238,0.3)',
                     }}
                   >
                     Best value
@@ -223,7 +223,7 @@ export default function CreditsPage() {
                     </span>
                   </p>
                   {bonusCredits && (
-                    <p className="text-xs mt-0.5" style={{ color: '#10b981' }}>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--accent-green)' }}>
                       +{bonusCredits.toLocaleString()} bonus credits
                     </p>
                   )}
@@ -332,7 +332,7 @@ export default function CreditsPage() {
                       </td>
                       <td
                         className="px-4 py-3 text-xs font-mono font-semibold whitespace-nowrap"
-                        style={{ color: isPositive ? '#10b981' : 'var(--text-muted)' }}
+                        style={{ color: isPositive ? 'var(--accent-green)' : 'var(--text-muted)' }}
                       >
                         {isPositive ? '+' : ''}{tx.amount.toLocaleString()}
                       </td>

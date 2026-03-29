@@ -62,10 +62,10 @@ export default function UsageDashboard({
         className="rounded-xl border p-6 space-y-4"
         style={{
           borderColor: isCritical
-            ? 'rgba(239,68,68,0.4)'
+            ? 'rgba(239,68,68,0.35)'
             : isWarning
-            ? 'rgba(245,158,11,0.4)'
-            : 'var(--border)',
+            ? 'rgba(245,158,11,0.35)'
+            : 'var(--border-default)',
           background: 'var(--surface)',
         }}
       >
@@ -90,9 +90,9 @@ export default function UsageDashboard({
           <span
             className="text-xs font-mono px-2.5 py-1 rounded-full border capitalize"
             style={{
-              borderColor: 'rgba(99,102,241,0.3)',
-              color: 'var(--accent)',
-              background: 'rgba(99,102,241,0.08)',
+            borderColor: 'rgba(67,97,238,0.3)',
+            color: 'var(--accent-blue)',
+            background: 'rgba(67,97,238,0.08)',
             }}
           >
             {plan} plan
@@ -106,9 +106,9 @@ export default function UsageDashboard({
               className="text-2xl font-bold"
               style={{
                 color: isCritical
-                  ? '#ef4444'
+                  ? 'var(--accent-red)'
                   : isWarning
-                  ? '#f59e0b'
+                  ? 'var(--accent-amber)'
                   : 'var(--text-primary)',
                 fontFamily: 'var(--font-display)',
               }}
@@ -131,10 +131,10 @@ export default function UsageDashboard({
               style={{
                 width: `${usagePct}%`,
                 background: isCritical
-                  ? '#ef4444'
+                  ? 'var(--accent-red)'
                   : isWarning
-                  ? '#f59e0b'
-                  : 'var(--accent)',
+                  ? 'var(--accent-amber)'
+                  : 'var(--accent-blue)',
               }}
             />
           </div>
@@ -142,9 +142,9 @@ export default function UsageDashboard({
             className="text-xs font-mono"
             style={{
               color: isCritical
-                ? '#ef4444'
+                ? 'var(--accent-red)'
                 : isWarning
-                ? '#f59e0b'
+                ? 'var(--accent-amber)'
                 : 'var(--text-muted)',
             }}
           >
@@ -159,19 +159,19 @@ export default function UsageDashboard({
             className="rounded-lg border px-4 py-3 flex items-center justify-between gap-4"
             style={{
               borderColor: 'rgba(239,68,68,0.3)',
-              background: 'rgba(239,68,68,0.05)',
+            background: 'rgba(239,68,68,0.05)',
             }}
           >
             <p
               className="text-xs leading-relaxed"
-              style={{ color: '#ef4444' }}
+              style={{ color: 'var(--accent-red)' }}
             >
               You&apos;re almost out of sessions. Upgrade to keep your council running.
             </p>
             <a
               href="/dashboard/pricing"
               className="flex-shrink-0 text-xs px-3 py-1.5 rounded-lg font-semibold"
-              style={{ background: '#ef4444', color: '#fff' }}
+              style={{ background: 'var(--accent-red)', color: '#fff' }}
             >
               Upgrade now
             </a>
@@ -204,9 +204,9 @@ export default function UsageDashboard({
                 onClick={() => setDays(d)}
                 className="text-xs font-mono px-2.5 py-1 rounded-lg border transition-all duration-150"
                 style={{
-                  borderColor: days === d ? 'var(--accent)' : 'var(--border)',
-                  background: days === d ? 'rgba(99,102,241,0.1)' : 'transparent',
-                  color: days === d ? 'var(--accent)' : 'var(--text-muted)',
+                  borderColor: days === d ? 'var(--accent-blue)' : 'var(--border-default)',
+                  background: days === d ? 'rgba(67,97,238,0.1)' : 'transparent',
+                  color: days === d ? 'var(--accent-blue)' : 'var(--text-muted)',
                 }}
               >
                 {d}d
@@ -252,7 +252,7 @@ export default function UsageDashboard({
                 {
                   label: 'Est. cost',
                   value: `$${stats.totalCostUsd.toFixed(4)}`,
-                  color: '#10b981',
+                  color: 'var(--accent-green)',
                 },
               ].map((stat) => (
                 <div key={stat.label} className="space-y-0.5">

@@ -49,7 +49,7 @@ function DemoProjectCard({ project }: { project: ProjectWithId }) {
   const STATUS_CONFIG = {
     draft:    { label: 'Draft',      color: 'var(--text-muted)',   bg: 'transparent',           border: 'var(--border)' },
     building: { label: 'Building',   color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
-    review:   { label: 'In review',  color: 'var(--accent)',       bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.3)' },
+    review:   { label: 'In review',  color: 'var(--accent-blue)',  bg: 'rgba(67,97,238,0.08)',  border: 'rgba(67,97,238,0.3)'  },
     complete: { label: 'Complete',   color: 'var(--accent-green)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
     error:    { label: 'Error',      color: 'var(--accent-red)',   bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
   }

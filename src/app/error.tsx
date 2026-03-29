@@ -14,48 +14,104 @@ export default function GlobalError({ error, reset }: ErrorProps) {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ background: 'var(--background)' }}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        background: 'var(--bg-base)',
+      }}
     >
-      <div className="max-w-md w-full text-center space-y-6">
+      <div style={{ maxWidth: '480px', width: '100%', textAlign: 'center' }}>
+        {/* Eyebrow */}
+        <p
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-red)',
+            marginBottom: '12px',
+          }}
+        >
+          Error · Something went wrong
+        </p>
+
+        {/* Large muted symbol */}
         <div
-          className="text-5xl font-mono"
-          style={{ color: 'var(--accent)', opacity: 0.6 }}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(56px, 10vw, 100px)',
+            fontWeight: 800,
+            letterSpacing: '-0.04em',
+            color: 'var(--accent-red)',
+            lineHeight: 1,
+            opacity: 0.15,
+            marginBottom: '32px',
+          }}
         >
           ⚠
         </div>
+
+        {/* Heading */}
         <h1
-          className="text-2xl font-bold"
           style={{
-            color: 'var(--text-primary)',
             fontFamily: 'var(--font-display)',
+            fontSize: '28px',
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            color: 'var(--text-primary)',
+            marginBottom: '12px',
           }}
         >
           Something went wrong
         </h1>
+
         <p
-          className="text-sm"
-          style={{ color: 'var(--text-secondary)' }}
+          style={{
+            fontSize: '15px',
+            color: 'var(--text-secondary)',
+            fontWeight: 300,
+            lineHeight: 1.7,
+            marginBottom: error.digest ? '12px' : '36px',
+          }}
         >
           {error.message || 'An unexpected error occurred. The council is investigating.'}
         </p>
+
         {error.digest && (
           <p
-            className="text-xs font-mono"
-            style={{ color: 'var(--text-muted)' }}
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              marginBottom: '36px',
+            }}
           >
             Error ID: {error.digest}
           </p>
         )}
+
         <button
           onClick={reset}
-          className="text-sm px-5 py-2.5 rounded-lg font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
           style={{
-            background: 'var(--accent)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--accent-blue)',
             color: '#fff',
+            borderRadius: 'var(--radius-md)',
+            padding: '14px 28px',
+            fontSize: '15px',
+            fontWeight: 500,
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 0 0 1px rgba(67,97,238,0.4), var(--shadow-glow-blue)',
           }}
         >
-          Try again
+          Try again →
         </button>
       </div>
     </div>

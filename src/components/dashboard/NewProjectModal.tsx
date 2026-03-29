@@ -193,10 +193,10 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
                       ? 'var(--accent)'
                       : 'var(--border)',
                     background: selectedStack.includes(tech)
-                      ? 'rgba(99,102,241,0.1)'
+                      ? 'rgba(67,97,238,0.1)'
                       : 'transparent',
                     color: selectedStack.includes(tech)
-                      ? 'var(--accent)'
+                      ? 'var(--accent-blue)'
                       : 'var(--text-muted)',
                   }}
                 >
@@ -240,9 +240,9 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
             <p
               className="text-xs px-3 py-2 rounded-lg border"
               style={{
-                color: '#ef4444',
-                borderColor: 'rgba(239,68,68,0.3)',
-                background: 'rgba(239,68,68,0.05)',
+                color: 'var(--accent-red)',
+              borderColor: 'rgba(239,68,68,0.3)',
+              background: 'rgba(239,68,68,0.05)',
               }}
             >
               {error}

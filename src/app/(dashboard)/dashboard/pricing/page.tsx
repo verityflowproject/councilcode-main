@@ -98,7 +98,7 @@ export default async function PricingPage() {
       {/* BYOK callout */}
       <div
         className="rounded-xl border p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-        style={{ borderColor: 'var(--border)', background: 'rgba(99,102,241,0.04)' }}
+        style={{ borderColor: 'var(--border-default)', background: 'rgba(67,97,238,0.04)' }}
       >
         <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           All plans support{' '}
@@ -136,18 +136,18 @@ export default async function PricingPage() {
               className="rounded-xl border p-6 space-y-6 relative"
               style={{
                 borderColor: plan.highlight
-                  ? 'var(--accent)'
-                  : 'var(--border)',
+                  ? 'var(--accent-blue)'
+                  : 'var(--border-default)',
                 background: plan.highlight
-                  ? 'rgba(99,102,241,0.04)'
-                  : 'var(--surface)',
+                  ? 'rgba(67,97,238,0.04)'
+                  : 'var(--bg-surface)',
               }}
             >
               {plan.highlight && (
                 <div
                   className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-mono px-3 py-1 rounded-full"
                   style={{
-                    background: 'var(--accent)',
+                    background: 'var(--accent-blue)',
                     color: '#fff',
                   }}
                 >
@@ -158,9 +158,9 @@ export default async function PricingPage() {
                 <div
                   className="absolute -top-3 right-4 text-xs font-mono px-3 py-1 rounded-full border"
                   style={{
-                    borderColor: '#10b981',
-                    color: '#10b981',
-                    background: 'rgba(16,185,129,0.1)',
+                    borderColor: 'rgba(16,185,129,0.4)',
+                    color: 'var(--accent-green)',
+                    background: 'rgba(16,185,129,0.08)',
                   }}
                 >
                   Current plan
@@ -212,10 +212,10 @@ export default async function PricingPage() {
                   <li key={feature} className="flex items-center gap-2.5">
                     <span
                       className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 text-xs"
-                      style={{
-                        background: 'rgba(16,185,129,0.15)',
-                        color: '#10b981',
-                      }}
+                        style={{
+                          background: 'rgba(16,185,129,0.12)',
+                          color: 'var(--accent-green)',
+                        }}
                     >
                       ✓
                     </span>

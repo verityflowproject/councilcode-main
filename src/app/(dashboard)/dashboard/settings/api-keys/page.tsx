@@ -190,8 +190,8 @@ export default function ApiKeysSettingsPage() {
             <div
               className="rounded-xl border-2 p-5 space-y-3"
               style={{
-                borderColor: 'rgba(99,102,241,0.35)',
-                background: 'linear-gradient(135deg, rgba(99,102,241,0.05) 0%, var(--surface) 100%)',
+                borderColor: 'rgba(67,97,238,0.35)',
+                background: 'linear-gradient(135deg, rgba(67,97,238,0.05) 0%, var(--bg-surface) 100%)',
               }}
             >
               {/* Header */}
@@ -207,9 +207,9 @@ export default function ApiKeysSettingsPage() {
                     <span
                       className="text-xs font-mono px-2 py-0.5 rounded-full border"
                       style={{
-                        color: 'var(--accent)',
-                        borderColor: 'rgba(99,102,241,0.4)',
-                        background: 'rgba(99,102,241,0.1)',
+                        color: 'var(--accent-blue)',
+                        borderColor: 'rgba(67,97,238,0.4)',
+                        background: 'rgba(67,97,238,0.1)',
                       }}
                     >
                       OpenRouter
@@ -287,8 +287,18 @@ export default function ApiKeysSettingsPage() {
           type="button"
           onClick={handleRemoveAll}
           disabled={removingAll}
-          className="text-xs px-4 py-2 rounded-lg border transition-all duration-150 hover:border-red-400 hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
-          style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+          className="text-xs px-4 py-2 rounded-lg border transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          style={{ borderColor: 'var(--border-default)', color: 'var(--text-muted)' }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLButtonElement
+            el.style.borderColor = 'var(--accent-red)'
+            el.style.color = 'var(--accent-red)'
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLButtonElement
+            el.style.borderColor = 'var(--border-default)'
+            el.style.color = 'var(--text-muted)'
+          }}
         >
           {removingAll ? 'Removing...' : 'Remove all keys'}
         </button>

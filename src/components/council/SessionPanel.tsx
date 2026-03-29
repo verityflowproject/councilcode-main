@@ -212,19 +212,19 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
           className="flex items-center justify-between rounded-xl border px-4 py-3"
           style={{
             borderColor: 'rgba(239,68,68,0.3)',
-            background: 'rgba(239,68,68,0.06)',
+          background: 'rgba(239,68,68,0.06)',
           }}
         >
           <div className="flex items-center gap-2">
-            <span style={{ color: '#ef4444' }}>⚡</span>
-            <span className="text-sm" style={{ color: '#ef4444' }}>
+            <span style={{ color: 'var(--accent-red)' }}>⚡</span>
+            <span className="text-sm" style={{ color: 'var(--accent-red)' }}>
               Not enough credits to run a Council session.
             </span>
           </div>
           <a
             href="/dashboard/credits"
             className="text-sm font-semibold transition-opacity hover:opacity-80"
-            style={{ color: '#ef4444' }}
+            style={{ color: 'var(--accent-red)' }}
           >
             Top up credits →
           </a>
@@ -378,7 +378,7 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
           className="rounded-xl border overflow-hidden"
           style={{
             borderColor: 'rgba(16,185,129,0.3)',
-            background: 'rgba(16,185,129,0.03)',
+          background: 'rgba(16,185,129,0.03)',
           }}
         >
           <div
@@ -388,11 +388,11 @@ export default function SessionPanel({ projectId, projectName }: SessionPanelPro
             <div className="flex items-center gap-2">
               <span
                 className="w-1.5 h-1.5 rounded-full"
-                style={{ background: '#10b981' }}
-              />
-              <span
-                className="text-xs font-mono font-semibold"
-                style={{ color: '#10b981' }}
+              style={{ background: 'var(--accent-green)' }}
+            />
+            <span
+              className="text-xs font-mono font-semibold"
+              style={{ color: 'var(--accent-green)' }}
               >
                 Final output — reviewed and approved
               </span>

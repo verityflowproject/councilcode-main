@@ -20,10 +20,10 @@ const MODEL_LABELS: Record<ModelRole, string> = {
 }
 
 const OUTCOME_CONFIG = {
-  approved:  { label: 'Approved',  color: '#10b981' },
-  rejected:  { label: 'Rejected',  color: '#ef4444' },
-  patched:   { label: 'Patched',   color: 'var(--accent)' },
-  escalated: { label: 'Escalated', color: '#f59e0b' },
+  approved:  { label: 'Approved',  color: 'var(--accent-green)' },
+  rejected:  { label: 'Rejected',  color: 'var(--accent-red)'   },
+  patched:   { label: 'Patched',   color: 'var(--accent-blue)'  },
+  escalated: { label: 'Escalated', color: 'var(--accent-amber)' },
 }
 
 type Outcome = keyof typeof OUTCOME_CONFIG
@@ -81,12 +81,12 @@ function StatsBar({ entries }: { entries: ReviewEntry[] }) {
         {
           label: 'Approved',
           value: counts.approved ?? 0,
-          color: '#10b981',
+          color: 'var(--accent-green)',
         },
         {
           label: 'Arbitrated',
           value: arbitrations,
-          color: '#f59e0b',
+          color: 'var(--accent-amber)',
         },
         {
           label: 'Tokens used',
@@ -147,11 +147,11 @@ function FilterBar({
               className="text-xs font-mono px-2.5 py-1 rounded-lg border transition-all duration-150"
               style={{
                 borderColor:
-                  outcomeFilter === o ? 'var(--accent)' : 'var(--border)',
+                  outcomeFilter === o ? 'var(--accent-blue)' : 'var(--border-default)',
                 background:
-                  outcomeFilter === o ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  outcomeFilter === o ? 'rgba(67,97,238,0.1)' : 'transparent',
                 color:
-                  outcomeFilter === o ? 'var(--accent)' : 'var(--text-muted)',
+                  outcomeFilter === o ? 'var(--accent-blue)' : 'var(--text-muted)',
               }}
             >
               {o}
@@ -176,7 +176,7 @@ function FilterBar({
                     : 'var(--border)',
                 background:
                   modelFilter === m && m !== 'all'
-                    ? `${MODEL_COLORS[m as ModelRole]}15`
+                    ? `${MODEL_COLORS[m as ModelRole]}18`
                     : modelFilter === m
                     ? 'rgba(255,255,255,0.04)'
                     : 'transparent',
@@ -278,7 +278,7 @@ function EntryRow({ entry }: { entry: ReviewEntry }) {
             <span
               className="text-xs font-mono px-2 py-0.5 rounded border hidden sm:block"
               style={{
-                color: '#f59e0b',
+                color: 'var(--accent-amber)',
                 borderColor: 'rgba(245,158,11,0.4)',
               }}
             >
@@ -354,7 +354,7 @@ function EntryRow({ entry }: { entry: ReviewEntry }) {
                   <p
                     key={i}
                     className="text-xs font-mono"
-                    style={{ color: '#f59e0b' }}
+                    style={{ color: 'var(--accent-amber)' }}
                   >
                     ⚠ {issue}
                   </p>
@@ -373,8 +373,8 @@ function EntryRow({ entry }: { entry: ReviewEntry }) {
               <div
                 className="rounded-lg border p-3"
                 style={{
-                  borderColor: 'rgba(249,115,22,0.3)',
-                  background: 'rgba(249,115,22,0.04)',
+                  borderColor: 'rgba(245,158,11,0.3)',
+                  background: 'rgba(245,158,11,0.04)',
                 }}
               >
                 <p
@@ -524,11 +524,13 @@ export default function ReviewLog({
       {/* Refresh */}
       <button
         onClick={fetchReviews}
-        className="w-full text-xs font-mono py-2 rounded-lg border transition-all duration-150 hover:border-accent"
+        className="w-full text-xs font-mono py-2 rounded-lg border transition-all duration-150"
         style={{
-          borderColor: 'var(--border)',
+          borderColor: 'var(--border-default)',
           color: 'var(--text-muted)',
         }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--accent-blue)' }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-default)' }}
       >
         Refresh log
       </button>

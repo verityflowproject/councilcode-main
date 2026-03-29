@@ -24,10 +24,10 @@ export default async function ProjectPage({ params }: PageProps) {
 
   const STATUS_COLORS = {
     draft:    'var(--text-muted)',
-    building: '#f59e0b',
-    review:   'var(--accent)',
-    complete: '#10b981',
-    error:    '#ef4444',
+    building: 'var(--accent-amber)',
+    review:   'var(--accent-blue)',
+    complete: 'var(--accent-green)',
+    error:    'var(--accent-red)',
   }
 
   const statusColor =

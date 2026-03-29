@@ -3,40 +3,90 @@ import Link from 'next/link'
 export default function NotFound() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{ background: 'var(--background)' }}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        background: 'var(--bg-base)',
+      }}
     >
-      <div className="max-w-md w-full text-center space-y-6">
+      <div style={{ maxWidth: '480px', width: '100%', textAlign: 'center' }}>
+        {/* Eyebrow — matches landing pattern exactly */}
+        <p
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--accent-blue)',
+            marginBottom: '12px',
+          }}
+        >
+          404 · Not found
+        </p>
+
+        {/* Large muted number */}
         <div
-          className="text-6xl font-mono font-bold"
-          style={{ color: 'var(--accent)', opacity: 0.4 }}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(64px, 12vw, 120px)',
+            fontWeight: 800,
+            letterSpacing: '-0.04em',
+            color: 'var(--text-primary)',
+            lineHeight: 1,
+            opacity: 0.12,
+            marginBottom: '32px',
+          }}
         >
           404
         </div>
+
+        {/* Heading */}
         <h1
-          className="text-2xl font-bold"
           style={{
-            color: 'var(--text-primary)',
             fontFamily: 'var(--font-display)',
+            fontSize: '28px',
+            fontWeight: 700,
+            letterSpacing: '-0.03em',
+            color: 'var(--text-primary)',
+            marginBottom: '12px',
           }}
         >
           Page not found
         </h1>
+
         <p
-          className="text-sm"
-          style={{ color: 'var(--text-secondary)' }}
+          style={{
+            fontSize: '15px',
+            color: 'var(--text-secondary)',
+            fontWeight: 300,
+            lineHeight: 1.7,
+            marginBottom: '36px',
+          }}
         >
           The council couldn&apos;t find what you were looking for. It may have been moved or deleted.
         </p>
+
         <Link
           href="/dashboard"
-          className="inline-block text-sm px-5 py-2.5 rounded-lg font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
           style={{
-            background: 'var(--accent)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--accent-blue)',
             color: '#fff',
+            borderRadius: 'var(--radius-md)',
+            padding: '14px 28px',
+            fontSize: '15px',
+            fontWeight: 500,
+            textDecoration: 'none',
+            boxShadow: '0 0 0 1px rgba(67,97,238,0.4), var(--shadow-glow-blue)',
           }}
         >
-          Back to dashboard
+          Back to dashboard →
         </Link>
       </div>
     </div>

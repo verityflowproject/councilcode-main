@@ -111,10 +111,10 @@ export default function ApiKeyCard({
               color: accentColor ?? 'var(--accent)',
               borderColor: accentColor
                 ? `${accentColor}40`
-                : 'rgba(99,102,241,0.3)',
+                : 'rgba(67,97,238,0.3)',
               background: accentColor
                 ? `${accentColor}14`
-                : 'rgba(99,102,241,0.08)',
+                : 'rgba(67,97,238,0.08)',
             }}
           >
             {roleBadge}
@@ -135,13 +135,13 @@ export default function ApiKeyCard({
           <span
             className="w-2 h-2 rounded-full"
             style={{
-              background: isActive ? '#10b981' : 'var(--text-muted)',
+              background: isActive ? 'var(--accent-green)' : 'var(--text-muted)',
               boxShadow: isActive ? '0 0 6px rgba(16,185,129,0.5)' : 'none',
             }}
           />
           <span
             className="text-xs font-mono"
-            style={{ color: isActive ? '#10b981' : 'var(--text-muted)' }}
+            style={{ color: isActive ? 'var(--accent-green)' : 'var(--text-muted)' }}
           >
             {isActive ? 'Active' : 'Missing'}
           </span>
@@ -220,10 +220,20 @@ export default function ApiKeyCard({
             type="button"
             onClick={handleRemove}
             disabled={loading}
-            className="px-3 py-2.5 rounded-lg text-xs font-medium border transition-all duration-150 hover:border-red-400 hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+            className="px-3 py-2.5 rounded-lg text-xs font-medium border transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
             style={{
-              borderColor: 'var(--border)',
+              borderColor: 'var(--border-default)',
               color: 'var(--text-muted)',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = 'var(--accent-red)'
+              el.style.color = 'var(--accent-red)'
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.borderColor = 'var(--border-default)'
+              el.style.color = 'var(--text-muted)'
             }}
           >
             Remove
@@ -236,7 +246,7 @@ export default function ApiKeyCard({
         <p
           className="text-xs mt-2 px-3 py-2 rounded-lg border"
           style={{
-            color: '#ef4444',
+            color: 'var(--accent-red)',
             borderColor: 'rgba(239,68,68,0.3)',
             background: 'rgba(239,68,68,0.05)',
           }}

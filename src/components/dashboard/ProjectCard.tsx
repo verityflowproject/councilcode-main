@@ -6,7 +6,7 @@ import type { IProject } from '@/lib/models'
 const STATUS_CONFIG = {
   draft:    { label: 'Draft',     color: 'var(--text-muted)',  bg: 'transparent',              border: 'var(--border)' },
   building: { label: 'Building',  color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.08)',   border: 'rgba(245,158,11,0.3)' },
-  review:   { label: 'In review', color: 'var(--accent)',      bg: 'rgba(99,102,241,0.08)',    border: 'rgba(99,102,241,0.3)' },
+  review:   { label: 'In review', color: 'var(--accent-blue)', bg: 'rgba(67,97,238,0.08)',    border: 'rgba(67,97,238,0.3)' },
   complete: { label: 'Complete',  color: 'var(--accent-green)', bg: 'rgba(16,185,129,0.08)',   border: 'rgba(16,185,129,0.3)' },
   error:    { label: 'Error',     color: 'var(--accent-red)',  bg: 'rgba(239,68,68,0.08)',     border: 'rgba(239,68,68,0.3)' },
 }
@@ -124,8 +124,10 @@ export default function ProjectCard({ project, onDelete }: ProjectCardProps) {
             e.stopPropagation()
             onDelete(project._id)
           }}
-          className="text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all duration-150 hover:text-red-400"
+          className="text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all duration-150"
           style={{ color: 'var(--text-muted)' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent-red)' }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)' }}
         >
           Delete
         </button>

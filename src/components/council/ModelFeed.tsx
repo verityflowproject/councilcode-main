@@ -90,10 +90,10 @@ function EventRow({ event }: { event: FeedEvent }) {
         style={{
           borderColor: event.blocked
             ? 'rgba(239,68,68,0.3)'
-            : 'rgba(139,92,246,0.3)',
+            : 'rgba(192,132,252,0.25)',
           background: event.blocked
             ? 'rgba(239,68,68,0.05)'
-            : 'rgba(139,92,246,0.05)',
+            : 'rgba(192,132,252,0.04)',
         }}
       >
         <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ function EventRow({ event }: { event: FeedEvent }) {
           <span
             className="text-xs font-mono px-1.5 py-0.5 rounded border"
             style={{
-              color: event.blocked ? '#ef4444' : '#10b981',
+              color: event.blocked ? 'var(--accent-red)' : 'var(--accent-green)',
               borderColor: event.blocked
                 ? 'rgba(239,68,68,0.4)'
                 : 'rgba(16,185,129,0.4)',
@@ -129,7 +129,7 @@ function EventRow({ event }: { event: FeedEvent }) {
               <li
                 key={i}
                 className="text-xs font-mono"
-                style={{ color: '#f59e0b' }}
+                style={{ color: 'var(--accent-amber)' }}
               >
                 ⚠ {w}
               </li>
@@ -145,8 +145,8 @@ function EventRow({ event }: { event: FeedEvent }) {
       <div
         className="rounded-lg border p-3 space-y-2"
         style={{
-          borderColor: 'rgba(249,115,22,0.3)',
-          background: 'rgba(249,115,22,0.05)',
+          borderColor: 'rgba(245,158,11,0.3)',
+          background: 'rgba(245,158,11,0.05)',
         }}
       >
         <div className="flex items-center gap-2">
@@ -159,8 +159,8 @@ function EventRow({ event }: { event: FeedEvent }) {
           <span
             className="text-xs font-mono px-1.5 py-0.5 rounded border"
             style={{
-              color: '#f97316',
-              borderColor: 'rgba(249,115,22,0.4)',
+              color: 'var(--accent-amber)',
+              borderColor: 'rgba(245,158,11,0.4)',
             }}
           >
             arbitration
@@ -169,8 +169,8 @@ function EventRow({ event }: { event: FeedEvent }) {
             <span
               className="text-xs font-mono px-1.5 py-0.5 rounded border"
               style={{
-                color: 'var(--accent)',
-                borderColor: 'rgba(99,102,241,0.4)',
+                color: 'var(--accent-blue)',
+                borderColor: 'rgba(67,97,238,0.4)',
               }}
             >
               patched
@@ -224,7 +224,7 @@ function EventRow({ event }: { event: FeedEvent }) {
         </span>
         <p
           className="text-xs mt-1"
-          style={{ color: '#ef4444' }}
+          style={{ color: 'var(--accent-red)' }}
         >
           {event.message}
         </p>
@@ -279,12 +279,12 @@ function EventRow({ event }: { event: FeedEvent }) {
           {event.type === 'review' && (
             <span
               className="text-xs font-mono px-1.5 py-0.5 rounded border"
-              style={{
-                color: event.approved ? '#10b981' : '#ef4444',
-                borderColor: event.approved
-                  ? 'rgba(16,185,129,0.4)'
-                  : 'rgba(239,68,68,0.4)',
-              }}
+            style={{
+              color: event.approved ? 'var(--accent-green)' : 'var(--accent-red)',
+              borderColor: event.approved
+                ? 'rgba(16,185,129,0.4)'
+                : 'rgba(239,68,68,0.4)',
+            }}
             >
               {event.approved ? 'approved' : 'flagged'}
             </span>
@@ -293,8 +293,8 @@ function EventRow({ event }: { event: FeedEvent }) {
             <span
               className="text-xs font-mono px-1.5 py-0.5 rounded border"
               style={{
-                color: 'var(--accent)',
-                borderColor: 'rgba(99,102,241,0.4)',
+                color: 'var(--accent-blue)',
+                borderColor: 'rgba(67,97,238,0.4)',
               }}
             >
               patched
@@ -319,10 +319,10 @@ function EventRow({ event }: { event: FeedEvent }) {
                 {event.issues.map((issue, i) => (
                   <li
                     key={i}
-                    className="text-xs font-mono"
-                    style={{ color: '#f59e0b' }}
-                  >
-                    ⚠ {issue}
+                  className="text-xs font-mono"
+                  style={{ color: 'var(--accent-amber)' }}
+                >
+                  ⚠ {issue}
                   </li>
                 ))}
               </ul>
