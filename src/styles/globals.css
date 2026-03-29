@@ -2,150 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════
-   DESIGN SYSTEM — Cinematic Dark Tech
-   ═══════════════════════════════════════════════════════════════ */
-
 :root {
-  /* Backgrounds */
-  --bg-base:     #050508;
-  --bg-surface:  #0C0E14;
-  --bg-elevated: #12141C;
+  --background: #0a0a0f;
+  --surface: #111118;
+  --border: #1e1e2e;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --text-primary: #f1f0ff;
+  --text-secondary: #a09ec0;
+  --text-muted: #4a4870;
 
-  /* Borders */
-  --border-subtle:  rgba(255,255,255,0.05);
-  --border-default: rgba(255,255,255,0.09);
-  --border-strong:  rgba(255,255,255,0.16);
+  --claude: #f97316;
+  --gpt4o: #10b981;
+  --codestral: #f59e0b;
+  --gemini: #3b82f6;
+  --perplexity: #8b5cf6;
 
-  /* Accents */
-  --accent-blue:      #4361EE;
-  --accent-blue-glow: rgba(67,97,238,0.25);
-  --accent-cyan:      #06B6D4;
-  --accent-green:     #10B981;
-  --accent-amber:     #F59E0B;
-  --accent-red:       #EF4444;
-
-  /* Text */
-  --text-primary:   #EAEEF4;
-  --text-secondary: #9BA5B8;
-  --text-muted:     #566070;
-
-  /* Typography */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body:    'Jost', sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
-
-  /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-
-  /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 8px 32px rgba(0,0,0,0.3);
-  --shadow-glow-blue: 0 0 60px rgba(67,97,238,0.2), 0 0 120px rgba(67,97,238,0.08);
-
-  /* ── Backward-compat aliases (dashboard / council / auth) ── */
-  --background:   var(--bg-base);
-  --surface:      var(--bg-surface);
-  --surface-2:    var(--bg-elevated);
-  --border:       var(--border-default);
-  --accent:       var(--accent-blue);
-  --accent-hover: #3251d4;
-  --font-sans:    'Jost', sans-serif;
-
-  /* Model role colors — preserved for dashboard/council */
-  --claude:     #9580FF;
-  --gpt4o:      #34D399;
-  --codestral:  #FBBF24;
-  --gemini:     #60A5FA;
-  --perplexity: #C084FC;
+  --font-sans: 'Syne', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Syne', system-ui, sans-serif;
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   GLOBAL BASE STYLES
-   ═══════════════════════════════════════════════════════════════ */
 
 * {
   box-sizing: border-box;
-  margin: 0;
   padding: 0;
-}
-
-html {
-  background: var(--bg-base);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.7;
-  letter-spacing: -0.01em;
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-}
-
-::selection {
-  background: rgba(67,97,238,0.3);
+  margin: 0;
 }
 
 body {
-  background: var(--bg-base);
+  background: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-body);
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
-
-/* Animated grain texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
-}
-
-/* Dot grid (Onyx / Linear style) */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events: none;
-  z-index: 0;
-  mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SCROLL ANIMATIONS
-   ═══════════════════════════════════════════════════════════════ */
-
-.fade-up {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Legacy class — kept for dashboard/council compatibility */
-.section-fade {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.section-fade.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   KEYFRAMES
-   ═══════════════════════════════════════════════════════════════ */
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
@@ -157,59 +46,20 @@ body::after {
   to   { opacity: 1; }
 }
 
-@keyframes word-fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes typewriter-line {
-  from { opacity: 0; transform: translateX(6px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.35; transform: scale(0.8); }
-}
-
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
-  50%      { opacity: 0.3; }
+  50%       { opacity: 0.3; }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(12px); }
+  from { opacity: 0; transform: translateX(16px); }
   to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0; }
 }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-
-@keyframes accordion-open {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes gradient-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.gradient-shift {
-  animation: gradient-shift 2.2s linear infinite;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   ANIMATION UTILITIES
-   ═══════════════════════════════════════════════════════════════ */
 
 .animate-fade-up {
   animation: fadeUp 0.6s ease forwards;
@@ -221,59 +71,11 @@ body::after {
   opacity: 0;
 }
 
-.animate-word {
-  display: inline-block;
-  animation: word-fade-up 0.5s ease forwards;
-  opacity: 0;
-}
-
-/* ── Delay utilities ── */
-.delay-0   { animation-delay: 0ms; }
-.delay-80  { animation-delay: 80ms; }
 .delay-100 { animation-delay: 100ms; }
-.delay-160 { animation-delay: 160ms; }
 .delay-200 { animation-delay: 200ms; }
-.delay-240 { animation-delay: 240ms; }
 .delay-300 { animation-delay: 300ms; }
-.delay-320 { animation-delay: 320ms; }
 .delay-400 { animation-delay: 400ms; }
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
-
-/* ═══════════════════════════════════════════════════════════════
-   AUTH PAGE COMPONENT STYLES
-   ═══════════════════════════════════════════════════════════════ */
-
-.auth-btn-ghost {
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-.auth-btn-ghost:hover {
-  border-color: var(--border-strong) !important;
-  background: rgba(255,255,255,0.06) !important;
-}
-
-.auth-btn-primary {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.auth-btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 1px rgba(67,97,238,0.6), 0 0 40px rgba(67,97,238,0.3) !important;
-}
-
-.auth-input {
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.auth-input:focus {
-  border-color: rgba(67,97,238,0.5) !important;
-  box-shadow: 0 0 0 3px rgba(67,97,238,0.1) !important;
-  outline: none;
-}
-
-.auth-back-link {
-  transition: color 0.15s ease;
-}
-.auth-back-link:hover {
-  color: var(--text-secondary) !important;
-}

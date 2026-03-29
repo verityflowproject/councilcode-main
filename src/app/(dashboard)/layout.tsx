@@ -1,4 +1,6 @@
 import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import '@/styles/globals.css'
 import { SessionProvider } from 'next-auth/react'
 import Link from 'next/link'
 
@@ -8,6 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const session = await auth()
+  if (!session?.user) redirect('/login')
   const plan = session?.user?.plan ?? 'free'
 
   return (
