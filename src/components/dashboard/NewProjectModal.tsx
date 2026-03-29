@@ -69,7 +69,7 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
   }
 
   return (
-    // Backdrop
+    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
@@ -77,11 +77,8 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
     >
       {/* Modal */}
       <div
-        className="w-full max-w-lg rounded-xl border overflow-hidden animate-fade-up"
-        style={{
-          background: 'var(--surface)',
-          borderColor: 'var(--border)',
-        }}
+        className="w-full max-w-lg rounded-xl border overflow-hidden"
+        style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
       >
         {/* Header */}
         <div
@@ -91,24 +88,20 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
           <div>
             <h2
               className="text-lg font-bold"
-              style={{
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-display)',
-              }}
+              style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
             >
               New project
             </h2>
-            <p
-              className="text-xs mt-0.5"
-              style={{ color: 'var(--text-muted)' }}
-            >
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
               The council will be briefed when you start a session
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors hover:bg-border"
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
             style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.06)' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
           >
             ✕
           </button>
@@ -118,10 +111,7 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
         <div className="px-6 py-5 space-y-5">
           {/* Name */}
           <div className="space-y-1.5">
-            <label
-              className="text-xs font-mono"
-              style={{ color: 'var(--text-secondary)' }}
-            >
+            <label className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
               Project name
             </label>
             <input
@@ -143,10 +133,7 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
 
           {/* Description */}
           <div className="space-y-1.5">
-            <label
-              className="text-xs font-mono"
-              style={{ color: 'var(--text-secondary)' }}
-            >
+            <label className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
               What are you building?
             </label>
             <textarea
@@ -164,46 +151,38 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
             />
-            <p
-              className="text-xs font-mono text-right"
-              style={{ color: 'var(--text-muted)' }}
-            >
+            <p className="text-xs font-mono text-right" style={{ color: 'var(--text-muted)' }}>
               {description.length}/1000
             </p>
           </div>
 
           {/* Tech stack */}
           <div className="space-y-2">
-            <label
-              className="text-xs font-mono"
-              style={{ color: 'var(--text-secondary)' }}
-            >
+            <label className="text-xs font-mono" style={{ color: 'var(--text-secondary)' }}>
               Tech stack{' '}
               <span style={{ color: 'var(--text-muted)' }}>(optional)</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              {TECH_STACK_OPTIONS.map((tech) => (
-                <button
-                  key={tech}
-                  type="button"
-                  onClick={() => toggleTech(tech)}
-                  className="text-xs font-mono px-2.5 py-1.5 rounded-lg border transition-all duration-150"
-                  style={{
-                    borderColor: selectedStack.includes(tech)
-                      ? 'var(--accent)'
-                      : 'var(--border)',
-                    background: selectedStack.includes(tech)
-                      ? 'rgba(67,97,238,0.1)'
-                      : 'transparent',
-                    color: selectedStack.includes(tech)
-                      ? 'var(--accent-blue)'
-                      : 'var(--text-muted)',
-                  }}
-                >
-                  {tech}
-                </button>
-              ))}
+              {TECH_STACK_OPTIONS.map((tech) => {
+                const selected = selectedStack.includes(tech)
+                return (
+                  <button
+                    key={tech}
+                    type="button"
+                    onClick={() => toggleTech(tech)}
+                    className="text-xs font-mono px-2.5 py-1.5 rounded-lg border transition-all duration-150"
+                    style={
+                      selected
+                        ? { borderColor: 'var(--accent)', background: 'rgba(99,102,241,0.1)', color: 'var(--accent)' }
+                        : { borderColor: 'var(--border)', color: 'var(--text-muted)', background: 'transparent' }
+                    }
+                  >
+                    {tech}
+                  </button>
+                )
+              })}
             </div>
+
             {/* Custom tech input */}
             <div className="flex gap-2">
               <input
@@ -225,10 +204,7 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
                 type="button"
                 onClick={addCustom}
                 className="px-3 py-2 rounded-lg border text-xs font-mono transition-all duration-150 hover:border-accent"
-                style={{
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-secondary)',
-                }}
+                style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
               >
                 Add
               </button>
@@ -241,8 +217,8 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
               className="text-xs px-3 py-2 rounded-lg border"
               style={{
                 color: 'var(--accent-red)',
-              borderColor: 'rgba(239,68,68,0.3)',
-              background: 'rgba(239,68,68,0.05)',
+                borderColor: 'rgba(239,68,68,0.3)',
+                background: 'rgba(239,68,68,0.05)',
               }}
             >
               {error}
@@ -258,10 +234,7 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
           <button
             onClick={onClose}
             className="text-sm px-4 py-2 rounded-lg border transition-all duration-150 hover:border-accent"
-            style={{
-              borderColor: 'var(--border)',
-              color: 'var(--text-secondary)',
-            }}
+            style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
           >
             Cancel
           </button>
@@ -269,15 +242,13 @@ export default function NewProjectModal({ onClose }: NewProjectModalProps) {
             onClick={handleSubmit}
             disabled={loading || !name.trim() || !description.trim()}
             className="text-sm px-5 py-2 rounded-lg font-semibold transition-all duration-150 hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-            style={{
-              background: 'var(--accent)',
-              color: '#fff',
-            }}
+            style={{ background: 'var(--accent)', color: '#fff' }}
           >
             {loading ? (
               <>
                 <span
-                  className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin"
+                  className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white"
+                  style={{ animation: 'spin 0.8s linear infinite' }}
                 />
                 Creating...
               </>

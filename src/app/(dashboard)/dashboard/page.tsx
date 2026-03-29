@@ -42,16 +42,16 @@ const DEMO_PROJECTS: ProjectWithId[] = [
   } as unknown as ProjectWithId,
 ]
 
-// ── Locked demo card (read-only — no link, hover shows sign-up prompt) ───────
+// ── Demo card — locked, hover shows sign-up prompt ───────────────────────────
 function DemoProjectCard({ project }: { project: ProjectWithId }) {
   const [hovered, setHovered] = useState(false)
 
   const STATUS_CONFIG = {
-    draft:    { label: 'Draft',      color: 'var(--text-muted)',   bg: 'transparent',           border: 'var(--border)' },
-    building: { label: 'Building',   color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
-    review:   { label: 'In review',  color: 'var(--accent-blue)',  bg: 'rgba(67,97,238,0.08)',  border: 'rgba(67,97,238,0.3)'  },
-    complete: { label: 'Complete',   color: 'var(--accent-green)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
-    error:    { label: 'Error',      color: 'var(--accent-red)',   bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
+    draft:    { label: 'Draft',     color: 'var(--text-muted)',   bg: 'transparent',           border: 'var(--border)' },
+    building: { label: 'Building',  color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
+    review:   { label: 'In review', color: 'var(--accent-blue)',  bg: 'rgba(67,97,238,0.08)',  border: 'rgba(67,97,238,0.3)' },
+    complete: { label: 'Complete',  color: 'var(--accent-green)', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+    error:    { label: 'Error',     color: 'var(--accent-red)',   bg: 'rgba(239,68,68,0.08)',  border: 'rgba(239,68,68,0.3)' },
   }
   const s = STATUS_CONFIG[project.status] ?? STATUS_CONFIG.draft
   const isActive = project.status === 'building' || project.status === 'review'
@@ -62,12 +62,12 @@ function DemoProjectCard({ project }: { project: ProjectWithId }) {
       onMouseLeave={() => setHovered(false)}
       className="rounded-xl border p-6 transition-all duration-200 relative overflow-hidden"
       style={{
-        borderColor: hovered ? 'rgba(67,97,238,0.4)' : 'var(--border)',
+        borderColor: hovered ? 'var(--accent)' : 'var(--border)',
         background: 'var(--surface)',
         cursor: 'default',
       }}
     >
-      {/* Hover overlay — nudge to sign up */}
+      {/* Hover overlay */}
       {hovered && (
         <Link
           href="/register"
@@ -82,16 +82,10 @@ function DemoProjectCard({ project }: { project: ProjectWithId }) {
             gap: '8px',
           }}
         >
-          <span style={{
-            fontFamily: 'var(--font-mono)', fontSize: '11px',
-            color: 'var(--text-muted)', letterSpacing: '0.06em',
-          }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
             Sign up to open
           </span>
-          <span style={{
-            fontFamily: 'var(--font-display)', fontSize: '14px',
-            fontWeight: 700, color: 'var(--accent-blue)',
-          }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'var(--accent)' }}>
             Create your account →
           </span>
         </Link>
@@ -111,7 +105,10 @@ function DemoProjectCard({ project }: { project: ProjectWithId }) {
         </div>
         <div className="flex-shrink-0 flex items-center gap-2">
           {isActive && (
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: s.color, animation: 'pulse-dot 1.5s ease-in-out infinite' }}
+            />
           )}
           <span
             className="text-xs font-mono px-2 py-1 rounded-full border whitespace-nowrap"
@@ -232,7 +229,7 @@ export default function DashboardPage() {
             <span style={{
               fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 600,
               letterSpacing: '0.08em', textTransform: 'uppercase' as const,
-              color: 'var(--accent-blue)',
+              color: 'var(--accent)',
               background: 'rgba(67,97,238,0.12)',
               border: '1px solid rgba(67,97,238,0.28)',
               borderRadius: '4px',
@@ -241,33 +238,21 @@ export default function DashboardPage() {
               Preview
             </span>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
-              You&apos;re viewing a live demo of FlowDash. Sign up to start building with the council.
+              You&apos;re viewing a live demo. Sign up to start building with the council.
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <Link
               href="/login"
-              style={{
-                textDecoration: 'none', fontSize: '12px',
-                color: 'var(--text-secondary)',
-                fontFamily: 'var(--font-mono)',
-                padding: '5px 12px', borderRadius: '7px',
-                border: '1px solid var(--border-subtle)',
-                transition: 'color 0.15s',
-              }}
+              className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-all duration-150 hover:border-accent"
+              style={{ textDecoration: 'none', color: 'var(--text-secondary)', borderColor: 'var(--border)' }}
             >
               Sign in
             </Link>
             <Link
               href="/register"
-              style={{
-                textDecoration: 'none', fontSize: '12px', fontWeight: 600,
-                color: '#fff',
-                fontFamily: 'var(--font-mono)',
-                background: 'var(--accent-blue)',
-                padding: '5px 14px', borderRadius: '7px',
-                transition: 'opacity 0.15s',
-              }}
+              className="text-xs font-mono px-3 py-1.5 rounded-lg font-semibold transition-all duration-150 hover:opacity-90"
+              style={{ textDecoration: 'none', color: '#fff', background: 'var(--accent)' }}
             >
               Get started free →
             </Link>
@@ -279,12 +264,12 @@ export default function DashboardPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1
-            className="text-2xl font-bold mb-1"
+            className="text-3xl font-bold"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
           >
             {isGuest ? 'Your workspace' : `Hey, ${firstName}`}
           </h1>
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
             {isGuest
               ? '3 example projects — sign up to brief the council on yours.'
               : loading
@@ -298,8 +283,8 @@ export default function DashboardPage() {
         {isGuest ? (
           <Link
             href="/register"
-            className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-lg font-semibold flex-shrink-0"
-            style={{ background: 'var(--accent-blue)', color: '#fff', textDecoration: 'none' }}
+            className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-lg font-semibold flex-shrink-0 transition-all duration-150 hover:opacity-90 active:scale-95"
+            style={{ background: 'var(--accent)', color: '#fff', textDecoration: 'none' }}
           >
             <span>+</span>
             New project
@@ -326,6 +311,7 @@ export default function DashboardPage() {
         />
       )}
 
+      {/* ── Plan info bar ── */}
       {!isGuest && session?.user && (
         <div
           className="rounded-xl border px-5 py-4 flex items-center justify-between gap-6"
@@ -347,13 +333,13 @@ export default function DashboardPage() {
               {projects.length} / {session.user.plan === 'pro' ? '∞' : '3'} projects
             </span>
             {session.user.plan === 'free' && (
-              <a
+              <Link
                 href="/dashboard/pricing"
                 className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-all duration-150 hover:opacity-90"
-                style={{ background: 'var(--accent)', color: '#fff' }}
+                style={{ background: 'var(--accent)', color: '#fff', textDecoration: 'none' }}
               >
                 Upgrade
-              </a>
+              </Link>
             )}
           </div>
         </div>
@@ -391,9 +377,9 @@ export default function DashboardPage() {
           className="rounded-xl border p-16 text-center"
           style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
         >
-          <div className="text-4xl mb-4" style={{ opacity: 0.3 }}>⬡</div>
+          <div className="text-5xl mb-4" style={{ opacity: 0.25 }}>⬡</div>
           <h3
-            className="text-base font-semibold mb-2"
+            className="text-lg font-semibold mb-2"
             style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}
           >
             No projects yet
